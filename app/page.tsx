@@ -4,6 +4,7 @@ import Button from "@/components/Button";
 import Input from "@/components/Input";
 import Card from "@/components/Card";
 import Modal from "@/components/Modal";
+import ScheduleGrid from "@/components/ScheduleGrid";
 
 export default function Home() {
   const [text, setText] = useState("");
@@ -64,6 +65,7 @@ export default function Home() {
           </div>
         </Modal>
       </div>
+      <ScheduleGrid />
     </>
   );
 }
