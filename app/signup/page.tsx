@@ -12,18 +12,16 @@ export default function SignupPage() {
   const router = useRouter();
 
   const [name, setName] = useState("");
-  const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
   const [checkPassword, setCheckPassword] = useState("");
   const [emailId, setEmailId] = useState("");
-  const [emailDomain, setEmailDomain] = useState("gmail.com");
+  const [emailDomain, setEmailDomain] = useState("");
 
-  const [nicknameError, setNicknameError] = useState("");
-  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
   const [passwordRuleError, setPasswordRuleError] = useState("");
   const [passwordMatchError, setPasswordMatchError] = useState("");
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState("");
 
   //비밀번호 조건 검사
   useEffect(() => {
@@ -50,57 +48,73 @@ export default function SignupPage() {
     }
   }, [password, checkPassword, isPasswordValid]);
 
-  //닉네임 중복확인
-  const handleNicknameCheck = () => {
-    //닉네임 중복 확인 api 가져오기
-    //실제로 데이터 가져오면 아래 함수도 바꿔야 함
-    if (nickname === "admin") {
-      setNicknameError("사용할 수 없는 닉네임입니다.");
-      setIsNicknameChecked(false);
-      alert("사용할 수 없는 닉네임입니다.");
-    } else {
-      setNicknameError("");
-      setIsNicknameChecked(true);
-      alert("사용 가능한 닉네임입니다.");
-    }
-  };
-
   // "입력 초기화" 버튼
   const handleReset = () => {
     setName("");
-    setNickname("");
     setPassword("");
     setCheckPassword("");
     setEmailId("");
-    setEmailDomain("gmail.com");
-    setNicknameError("");
+    setEmailDomain("");
     setPasswordRuleError("");
     setPasswordMatchError("");
+    setServerError("");
     // setIsPasswordChecked(false);
     setIsPasswordValid(false);
   };
 
   // "가입하기" 버튼
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setServerError("");
 
     //최종 검사
     if (!isPasswordValid || password !== checkPassword) {
       alert("비밀번호를 올바르게 입력해주세요.");
       return;
     }
-    if (!isNicknameChecked) {
-      alert("닉네임 중복 확인을 해주세요.");
-      return;
-    }
 
     const fullEmail = `${emailId}@${emailDomain}`;
-    //api 명세서 확인하기(userdata)
-    const userData = { name, nickname, password, email: fullEmail };
 
-    //추후 실제로 보내는 걸로 수정
-    console.log("data to backEnd : ", userData);
-    router.push("/signup/success");
+    const userData = {
+      name: name,
+      email: fullEmail,
+      password: password,
+      password2: checkPassword,
+    };
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/signup/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(userData),
+        }
+      );
+
+      // 서버 응답 처리
+      if (response.status === 201) {
+        //성공
+        const data = await response.json();
+        console.log("회원가입 성공", data);
+        router.push("/signup/success");
+      } else {
+        //실패
+        const errorData = await response.json();
+        //백엔드가 보내주는 에러메세지를 그대로 표시
+        const errorMessage = Object.values(errorData).flat().join(" ");
+        setServerError(errorMessage || "회원가입에 실패했습니다.");
+        console.log("회원가입 실패", errorData);
+      }
+    } catch (error) {
+      //네트워크 에러 등 fetch 자체가 실패한 경우
+      console.log("네트워크 오류", error);
+      setServerError(
+        "네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+      );
+    }
   };
 
   return (
@@ -119,28 +133,7 @@ export default function SignupPage() {
             required
           />
         </div>
-        <div>
-          <label>닉네임</label>
-          <div className="flex gap-2 mt-1">
-            <Input
-              type="text"
-              placeholder="닉네임 입력"
-              value={nickname}
-              onChange={(e) => {
-                setNickname(e.target.value);
-                setIsNicknameChecked(false);
-              }}
-              required
-            />
-            <Button
-              type="button"
-              onClick={handleNicknameCheck}
-              className="flex-shrink-0"
-            >
-              중복 확인
-            </Button>
-          </div>
-        </div>
+
         <div>
           <div>
             <label>비밀번호</label>
@@ -210,6 +203,7 @@ export default function SignupPage() {
           </div>
         </div>
         <div>
+          {serverError && <p className="text-red-500">{serverError}</p>}
           <Button type="submit">가입하기</Button>
           <Button type="button" onClick={handleReset}>
             입력 초기화
