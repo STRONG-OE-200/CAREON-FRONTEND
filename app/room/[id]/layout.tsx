@@ -1,14 +1,13 @@
-import React from "react";
+import React, { use } from "react";
 // import BottomNav from "@/components/BottomNav";
 
-export default async function RoomLayout({
-  children,
-  params,
-}: {
+type RoomLayoutProps = {
   children: React.ReactNode;
-  params: { id: string };
-}) {
-  const resolvedParams = await params;
+  params: { id: string } | Promise<{ id: string }>;
+};
+
+export default function RoomLayout({ children, params }: RoomLayoutProps) {
+  const resolvedParams = use(params);
   const roomId = resolvedParams.id;
 
   return (
