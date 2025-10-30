@@ -36,7 +36,7 @@ export default function LoginPage() {
         console.log("로그인 성공", data);
         //access 토큰 저장
         localStorage.setItem("accessToken", data.access);
-        router.push("/"); //로그인 성공하면 어디로 가는지?
+        router.push("/login/success");
       } else {
         const errorData = await response.json();
         if (errorData.non_field_errors) {
