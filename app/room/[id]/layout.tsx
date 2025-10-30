@@ -1,13 +1,15 @@
+import React from "react";
 // import BottomNav from "@/components/BottomNav";
 
-export default function RoomLayout({
+export default async function RoomLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
   params: { id: string };
 }) {
-  const roomId = params.id;
+  const resolvedParams = await params;
+  const roomId = resolvedParams.id;
 
   return (
     <div className="flex flex-col min-h-screen">
