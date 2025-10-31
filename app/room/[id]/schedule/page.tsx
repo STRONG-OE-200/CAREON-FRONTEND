@@ -10,3 +10,5 @@ export default function SchedulePage() {
     </>
   );
 }
+
+//params 로 id 받기

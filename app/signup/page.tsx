@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
+import Modal from "@/components/Modal";
 
 // 비밀번호 - 8~20자, 문자, 숫자, 특수문자(@$!%*#?&) 각각 1개 이상 포함
 const PASSWORD_REGEX =
@@ -22,6 +23,7 @@ export default function SignupPage() {
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   //비밀번호 조건 검사
   useEffect(() => {
@@ -62,19 +64,12 @@ export default function SignupPage() {
     setIsPasswordValid(false);
   };
 
-  // "가입하기" 버튼
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // api 전송 함수(모달 '예')
+  const handleActualSubmit = async () => {
+    setIsModalOpen(false);
     setServerError("");
 
-    //최종 검사
-    if (!isPasswordValid || password !== checkPassword) {
-      alert("비밀번호를 올바르게 입력해주세요.");
-      return;
-    }
-
     const fullEmail = `${emailId}@${emailDomain}`;
-
     const userData = {
       name: name,
       email: fullEmail,
@@ -115,6 +110,20 @@ export default function SignupPage() {
         "네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
       );
     }
+  };
+
+  //가입하기 버튼 함수
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setServerError("");
+
+    //최종 검사
+    if (!isPasswordValid || password !== checkPassword) {
+      alert("비밀번호를 올바르게 입력해주세요.");
+      return;
+    }
+
+    setIsModalOpen(true);
   };
 
   return (
@@ -205,6 +214,17 @@ export default function SignupPage() {
         <div>
           {serverError && <p className="text-red-500">{serverError}</p>}
           <Button type="submit">가입하기</Button>
+          <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <p>위의 정보로 회원가입하시겠습니까?</p>
+            <div>
+              <Button type="button" onClick={handleActualSubmit}>
+                예
+              </Button>
+              <Button type="button" onClick={() => setIsModalOpen(false)}>
+                아니오
+              </Button>
+            </div>
+          </Modal>
           <Button type="button" onClick={handleReset}>
             입력 초기화
           </Button>
