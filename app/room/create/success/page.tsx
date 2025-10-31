@@ -1,60 +1,21 @@
-//백한테 응답 받을 때 방 id도 생성해서 보내달라고 해야 함
-//그리고 이걸 받아서 id를 저장해서 거기로 라우팅 보내기(방 입장)
-"use client";
-import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
-import Button from "@/components/Button";
-import Link from "next/link";
+import { Suspense } from "react";
+import RoomCreateSuccessClient from "@/components/RoomCreateSuccessClient";
 
-export const dynamic = "force-dynamic";
-
+// "use client"가 없는 서버 컴포넌트입니다.
 export default function RoomCreateSuccessPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const inviteCode = searchParams.get("code");
-  const newRoomId = searchParams.get("id");
-
-  const [copySuccess, setCopySuccess] = useState(false);
-
-  //텍스트 복사 함수
-  const handleCopyCode = async () => {
-    if (!inviteCode) return;
-
-    try {
-      //텍스트 복사
-      await navigator.clipboard.writeText(inviteCode);
-
-      setCopySuccess(true);
-      setTimeout(() => setCopySuccess(false), 2000);
-    } catch (error) {
-      console.error("클립보드 복사 실패", error);
-      alert("코드 복사에 실패했습니다. 직접 복사해주세요.");
-    }
-  };
-
   return (
-    <>
-      <div>
-        <h3>방 생성이 완료되었습니다!</h3>
-        <p>팀원들에게 아래 환자 코드를 공유하세요.</p>
-        <p>생성된 방에 입장하기 위해 환자 코드가 필요합니다.</p>
-      </div>
-      <main>
-        <div>
-          <span>{inviteCode || "생성된 환자 코드 없음"}</span>
-          <Button onClick={handleCopyCode}>
-            {copySuccess ? "✅ 복사 완료!" : "초대 코드 복사하기"}
-          </Button>
-        </div>
-        {newRoomId && (
-          <Button onClick={() => router.push(`/room/${newRoomId}/schedule`)}>
-            방 입장하기
-          </Button>
-        )}
-        {/* 메인으로 이동 */}
-        <Link href="/">메인으로 가기</Link>
-      </main>
-    </>
+    // 1. Suspense로 클라이언트 컴포넌트를 감쌉니다.
+    <Suspense fallback={<LoadingUI />}>
+      <RoomCreateSuccessClient />
+    </Suspense>
+  );
+}
+
+// 2. Suspense가 기다리는 동안 보여줄 '로딩' 화면
+function LoadingUI() {
+  return (
+    <div className="flex flex-col justify-center items-center min-h-screen text-center p-4">
+      <h1 className="text-2xl font-bold">초대 코드 확인 중...</h1>
+    </div>
   );
 }
