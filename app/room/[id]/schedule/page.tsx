@@ -24,10 +24,6 @@ function CreateScheduleModal({
     <Modal isOpen={isOpen} onClose={onClose}>
       <h2>스케줄 생성하기</h2>
       <p>방장이 간병필요시간 설정하는 ui</p>
-      {/* 이 모달 안에서 '방장 스케줄 생성' API를 호출하고,
-        성공하면 onClose()를 호출하면서 
-        부모(SchedulePage)에게 스케줄을 다시 불러오라고 신호를 줘야 합니다.
-      */}
       <Button onClick={onClose} className="mt-4">
         닫기
       </Button>
@@ -37,17 +33,23 @@ function CreateScheduleModal({
 
 export default function SchedulePage() {
   const router = useRouter();
-
   const params = useParams();
   const roomId = params.id as string;
 
-  const [scheduleData, setScheduleData] = useState<any>(null); // (API 응답 데이터)
+  const [scheduleData, setScheduleData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [isOwner, setIsOwner] = useState(false);
 
   useEffect(() => {
-    if (!roomId) return;
+    const ownerStatus = localStorage.getItem("isOwner");
+    setIsOwner(ownerStatus === "true");
+
+    if (!roomId) {
+      setIsLoading(false);
+      return;
+    }
 
     const fetchSchedule = async () => {
       const token = localStorage.getItem("accessToken");
@@ -57,31 +59,27 @@ export default function SchedulePage() {
       }
       try {
         const response = await fetch(
-          // (API 명세서에 따라 /schedule/이 아닐 수 있음 - 확인 필요!)
-          `${process.env.NEXT_PUBLIC_API_URL}/rooms/${roomId}/schedule/`,
+          `${process.env.NEXT_PUBLIC_API_URL}/rooms/${roomId}/schedule/`, // (이 API 주소는 백엔드와 확인 필요!)
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
 
-        // (API 명세서에 따라 응답 코드가 다를 수 있음!)
         if (response.status === 200) {
           const data = await response.json();
-          // (API 명세서에 따라 data.schedule / data.userRole 키 이름 확인 필요!)
+          // (API 명세서에 따라 data.schedule 키 이름 확인 필요!)
           setScheduleData(data.schedule);
-          setIsOwner(data.userRole === "OWNER");
         } else if (response.status === 404) {
-          // (404일 때도 userRole을 받기로 백엔드와 약속해야 함!)
-          const data = await response.json();
-          setIsOwner(data.userRole === "OWNER");
+          // 404 (스케줄 없음)일 때 HTML이 오는지 JSON이 오는지 확인 필요!
+          // (임시로 '스케줄 없음'으로 처리)
           setScheduleData(null);
         } else {
           console.error("스케줄 로딩 실패");
           setScheduleData(null);
-          setIsOwner(false);
         }
       } catch (error) {
         console.error("네트워크 오류:", error);
+        setScheduleData(null);
       } finally {
         setIsLoading(false);
       }
@@ -97,14 +95,12 @@ export default function SchedulePage() {
   return (
     <>
       {scheduleData ? (
-        // (★참고★)
-        // 스케줄 데이터가 있으면 ScheduleGrid를 렌더링
-        // (지금은 ScheduleGrid가 'props'를 받지 않는 예전 버전으로 가정)
         <div>
           <h1>스케줄</h1>
           <ScheduleGrid />
         </div>
       ) : (
+        // 스케줄 데이터가 null이면 '빈 화면' 렌더링
         <ScheduleEmptyState
           isOwner={isOwner}
           onScheduleCreateClick={() => setIsModalOpen(true)}
