@@ -37,8 +37,9 @@ export default function LoginPage() {
         //access 토큰 저장
         localStorage.setItem("accessToken", data.access);
 
-        if (data.roomId) {
-          router.push(`/room/${data.roomId}`);
+        if (data.room_ids && data.room_ids.length > 0 && data.room_ids[0]) {
+          const firstRoomId = data.room_ids[0];
+          router.push(`/room/${firstRoomId}`);
         } else {
           router.push("/login/success");
         }
