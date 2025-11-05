@@ -37,10 +37,12 @@ export default function LoginPage() {
         //access 토큰 저장
         localStorage.setItem("accessToken", data.access);
 
-        if (data.room_ids && data.room_ids.length > 0 && data.room_ids[0]) {
-          const firstRoomId = data.room_ids[0];
-          router.push(`/room/${firstRoomId}`);
+        if (data.rooms && data.rooms.length > 0 && data.rooms[0]) {
+          const firstRoom = data.rooms[0];
+          localStorage.setItem("isOwner", firstRoom.isOwner);
+          router.push(`/room/${firstRoom.room_id}`);
         } else {
+          localStorage.removeItem("isOwner");
           router.push("/login/success");
         }
       } else {
