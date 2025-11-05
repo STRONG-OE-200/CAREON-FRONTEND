@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
+import api from "@/lib/api"; // 1. (★수정★) fetch 대신 api.ts를 import
 
 export default function CreateRoomPage() {
   const router = useRouter();
@@ -10,46 +11,41 @@ export default function CreateRoomPage() {
   const [relation, setRelation] = useState("");
   const [error, setError] = useState("");
 
+  // 2. (★수정★) handleSubmit 함수를 axios에 맞게 수정
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
-    //로그인 시 저장한 토큰으로 회원인지 확인
-    const token = localStorage.getItem("accessToken");
-
-    if (!token) {
-      setError("로그인이 필요합니다. 다시 로그인해주세요.");
-      router.push("/login");
-      return;
-    }
+    // (localStorage.getItem("token") 및 !token 체크 로직 삭제 -> api.ts가 자동 처리)
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/rooms/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            patient: patient,
-            relation: relation,
-          }),
-        }
-      );
+      // 3. (★수정★) api.post() 호출
+      // (headers, credentials, method, Authorization이 자동으로 포함됨)
+      const response = await api.post("/rooms/", {
+        patient: patient,
+        relation: relation,
+      });
 
+      // 4. (★수정★) 2xx (성공) 응답은 'try'에서 처리
       if (response.status === 201) {
         //성공
-        const data = await response.json();
+        const data = response.data; // .json() 필요 없음
         console.log("방 생성 성공", data);
         router.push(
           `/room/create/success?code=${data.invite_code}&id=${data.id}`
         );
       } else {
-        //실패
-        console.error("HTTP 에러", response.status);
-        const errorData = await response.json();
+        // (혹시 201이 아닌 200 등 다른 2xx 코드가 올 경우)
+        setError("방 생성에 성공했으나, 알 수 없는 응답입니다.");
+      }
+    } catch (error: any) {
+      // 5. (★수정★) 4xx, 5xx 에러 및 네트워크 에러는 'catch'에서 처리
+      console.error("방 생성 오류:", error);
+
+      if (error.response) {
+        // 5-A. 서버가 응답을 하긴 함 (4xx, 5xx)
+        // (이전 'else' 블록의 로직이 여기로 이동)
+        const errorData = error.response.data;
         console.error("백엔드 에러 메세지 ", errorData);
         if (errorData.patient) {
           //400 에러
@@ -57,15 +53,19 @@ export default function CreateRoomPage() {
         } else if (errorData.detail) {
           //401 에러
           setError(errorData.detail);
+        } else {
+          setError("알 수 없는 서버 오류입니다.");
         }
+      } else {
+        // 5-B. 서버가 응답을 안 함 (네트워크 오류)
+        // (이전 'catch' 블록의 로직)
+        console.error("네트워크 오류", error);
+        setError("네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
       }
-    } catch (error) {
-      //오류
-      console.error("네트워크 오류", error);
-      setError("네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
     }
   };
 
+  // (return JSX 부분은 요청하신 대로 수정하지 않았습니다)
   return (
     <>
       <div>

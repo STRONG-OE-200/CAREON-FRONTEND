@@ -36,7 +36,7 @@ export default function Sidebar({
     <>
       <div className="fixed inset-0 top-16 z-20" onClick={onClose}>
         <div
-          className="fixed top-16 left-0 w-64 h-full bg-white z-30 p-4"
+          className="fixed top-16 left-0 w-full h-full bg-white z-30 p-4"
           onClick={(e) => e.stopPropagation()}
         >
           <nav className="flex flex-col">

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import Modal from "@/components/Modal";
+import api from "@/lib/api"; // 1. (★수정★) fetch 대신 api.ts를 import
 
 // 비밀번호 - 8~20자, 문자, 숫자, 특수문자(@$!%*#?&) 각각 1개 이상 포함
 const PASSWORD_REGEX =
@@ -25,7 +26,7 @@ export default function SignupPage() {
   const [serverError, setServerError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  //비밀번호 조건 검사
+  //(비밀번호 조건 검사 useEffect - 수정 없음)
   useEffect(() => {
     if (password === "") {
       setPasswordRuleError("");
@@ -41,7 +42,7 @@ export default function SignupPage() {
     }
   }, [password]);
 
-  // 비밀번호 일치검사
+  // (비밀번호 일치검사 useEffect - 수정 없음)
   useEffect(() => {
     if (isPasswordValid && checkPassword && password !== checkPassword) {
       setPasswordMatchError("비밀번호가 일치하지 않습니다.");
@@ -50,7 +51,7 @@ export default function SignupPage() {
     }
   }, [password, checkPassword, isPasswordValid]);
 
-  // "입력 초기화" 버튼
+  // ("입력 초기화" 버튼 handleReset - 수정 없음)
   const handleReset = () => {
     setName("");
     setPassword("");
@@ -64,7 +65,7 @@ export default function SignupPage() {
     setIsPasswordValid(false);
   };
 
-  // api 전송 함수(모달 '예')
+  // 2. (★수정★) api 전송 함수(모달 '예')를 axios에 맞게 수정
   const handleActualSubmit = async () => {
     setIsModalOpen(false);
     setServerError("");
@@ -78,41 +79,40 @@ export default function SignupPage() {
     };
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/signup/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(userData),
-        }
-      );
+      // 3. (★수정★) api.post() 호출
+      // (headers, credentials, method는 api.ts가 자동 처리)
+      const response = await api.post("/auth/signup/", userData);
 
-      // 서버 응답 처리
+      // 4. (★수정★) axios는 201(성공) 시 .data로 JSON을 바로 줌
       if (response.status === 201) {
         //성공
-        const data = await response.json();
+        const data = response.data; // .json() 필요 없음
         console.log("회원가입 성공", data);
         router.push("/signup/success");
       } else {
-        //실패
-        const errorData = await response.json();
+        // (혹시 201이 아닌 200 등 다른 2xx 코드가 올 경우)
+        setServerError("회원가입에 성공했으나, 알 수 없는 응답입니다.");
+      }
+    } catch (error: any) {
+      // 5. (★수정★) axios는 4xx, 5xx 에러를 'catch'에서 처리
+      if (error.response) {
+        // 5-A. 서버가 응답을 하긴 함 (4xx, 5xx)
+        const errorData = error.response.data;
         //백엔드가 보내주는 에러메세지를 그대로 표시
         const errorMessage = Object.values(errorData).flat().join(" ");
         setServerError(errorMessage || "회원가입에 실패했습니다.");
         console.log("회원가입 실패", errorData);
+      } else {
+        // 5-B. 서버가 응답을 안 함 (네트워크 오류)
+        console.log("네트워크 오류", error);
+        setServerError(
+          "네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+        );
       }
-    } catch (error) {
-      //네트워크 에러 등 fetch 자체가 실패한 경우
-      console.log("네트워크 오류", error);
-      setServerError(
-        "네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
-      );
     }
   };
 
-  //가입하기 버튼 함수
+  //(가입하기 버튼 함수 handleSubmit - 수정 없음)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setServerError("");
@@ -126,6 +126,7 @@ export default function SignupPage() {
     setIsModalOpen(true);
   };
 
+  // (return JSX 부분은 요청하신 대로 수정하지 않았습니다)
   return (
     <>
       <div>

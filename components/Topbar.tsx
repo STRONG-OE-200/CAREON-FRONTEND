@@ -4,7 +4,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 export default function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
   return (
     <>
-      <header className="sticky flex items-center justify-between top-0 z-10 w-full h-16 px-4">
+      <header className="sticky flex items-center justify-between top-0 z-10 w-full h-16 px-4 bg-white">
         <button onClick={onMenuClick}>
           <RxHamburgerMenu size={24} />
         </button>
