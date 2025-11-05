@@ -1,11 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
-// 1. (★수정★) 'useParams' 훅을 import 합니다.
 import { useRouter, useParams } from "next/navigation";
 import ScheduleGrid from "@/components/ScheduleGrid";
-import ScheduleEmptyState from "@/components/ScheduleEmptyState"; // (경로 @/components/... 로 수정됨)
+import ScheduleEmptyState from "@/components/ScheduleEmptyState";
 import Modal from "@/components/Modal";
-import Button from "@/components/Button"; // CreateScheduleModal에서 사용
+import Button from "@/components/Button";
 
 // (임시) 로딩 스피너
 function LoadingSpinner() {
@@ -36,22 +35,18 @@ function CreateScheduleModal({
   );
 }
 
-// 2. (★수정★) props로 params를 받지 않습니다.
 export default function SchedulePage() {
   const router = useRouter();
 
-  // 3. (★수정★) 'useParams' 훅을 사용해 ID를 가져옵니다.
-  const params = useParams(); // (예: { id: '13' })
-  const roomId = params.id as string; // 'Promise'가 아닌 'string'이 바로 나옵니다.
+  const params = useParams();
+  const roomId = params.id as string;
 
   const [scheduleData, setScheduleData] = useState<any>(null); // (API 응답 데이터)
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isOwner, setIsOwner] = useState(false); // (방장 여부)
+  const [isOwner, setIsOwner] = useState(false);
 
-  // 4. useEffect는 이제 안정적인 roomId를 기반으로 실행됩니다.
   useEffect(() => {
-    // roomId가 (useParams로 인해) 아직 준비되지 않았으면 실행 안 함
     if (!roomId) return;
 
     const fetchSchedule = async () => {
@@ -83,7 +78,7 @@ export default function SchedulePage() {
         } else {
           console.error("스케줄 로딩 실패");
           setScheduleData(null);
-          setIsOwner(false); // 에러 시 기본값
+          setIsOwner(false);
         }
       } catch (error) {
         console.error("네트워크 오류:", error);
@@ -93,7 +88,7 @@ export default function SchedulePage() {
     };
 
     fetchSchedule();
-  }, [roomId, router]); // roomId가 변경되면 이 useEffect를 다시 실행
+  }, [roomId, router]);
 
   if (isLoading) {
     return <LoadingSpinner />;
@@ -110,9 +105,8 @@ export default function SchedulePage() {
           <ScheduleGrid />
         </div>
       ) : (
-        // 스케줄 데이터가 null이면 '빈 화면' 렌더링
         <ScheduleEmptyState
-          isOwner={isOwner} // isOwner prop을 전달
+          isOwner={isOwner}
           onScheduleCreateClick={() => setIsModalOpen(true)}
         />
       )}
