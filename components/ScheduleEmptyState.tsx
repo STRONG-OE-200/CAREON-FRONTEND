@@ -2,8 +2,11 @@
 import Button from "./Button";
 
 type Props = {
-  onScheduleCreateClick: () => void;
   isOwner: boolean;
+  onScheduleCreateClick: () => void;
+  weekId: number | null;
+  isFinalized: boolean;
+  roomId: string;
 };
 
 export default function ScheduleEmptyState({
