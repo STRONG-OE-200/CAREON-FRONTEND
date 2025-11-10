@@ -1,0 +1,7 @@
+export const MEMBER_COLORS = {
+  PINK: "FFC9D6",
+  YELLOW: "FFE88A",
+  BLUE: "C5F4EE",
+  GREEN: "C8F0D0",
+  PURPLE: "C9E0FF",
+};

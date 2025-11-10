@@ -21,10 +21,7 @@ export default function RootLayout({
            나중에 폰트가 정해지면 tailwind.config.ts에 등록하고
            여기에 className="font-sans" 등을 추가하면 됩니다.
       */}
-      <body>
-        {/* 6. (필수) 실제 페이지 내용이 여기에 들어옵니다. */}
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
