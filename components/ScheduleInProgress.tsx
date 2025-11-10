@@ -6,6 +6,7 @@ type Props = {
   isOwner: boolean;
   roomId: string;
   weekId: number;
+  isFinalized: boolean;
 };
 
 export default function ScheduleInProgress({ isOwner, roomId, weekId }: Props) {
