@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Modal from "./Modal";
@@ -10,6 +9,8 @@ type SidebarProps = {
   onClose: () => void;
   isOwner: boolean;
   roomId: string;
+  weekId: number | null;
+  isFinalized: boolean;
 };
 
 export default function Sidebar({
@@ -17,14 +18,16 @@ export default function Sidebar({
   onClose,
   isOwner,
   roomId,
+  weekId,
+  isFinalized,
 }: SidebarProps) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleCreateClick = () => {
+    onClose();
     if (isOwner) {
-      onClose();
-      router.push(`/room/${roomId}/schedule/new`);
+      router.push(`/room/${roomId}/schedule/new/`);
     } else {
       setIsModalOpen(true);
     }
@@ -40,12 +43,28 @@ export default function Sidebar({
           onClick={(e) => e.stopPropagation()}
         >
           <nav className="flex flex-col">
-            <Link href="#" className="py-3 border-b">
-              내 스케줄만 보기
-            </Link>
-            <Link href="#" className="py-3 border-b">
-              시간표 생성 참여하기
-            </Link>
+            <>
+              <button
+                onClick={() => {
+                  onClose();
+                  router.push(`/room/${roomId}/schedule/my`);
+                }}
+                className="py-3 border-b text-left"
+                disabled={!roomId}
+              >
+                내 스케줄만 보기
+              </button>
+              <button
+                onClick={() => {
+                  onClose();
+                  router.push(`/room/${roomId}/schedule/participate/${weekId}`);
+                }}
+                className="py-3 border-b text-left"
+                disabled={!roomId}
+              >
+                시간표 생성 참여하기
+              </button>
+            </>
             <button
               onClick={handleCreateClick}
               className="py-3 border-b text-left"

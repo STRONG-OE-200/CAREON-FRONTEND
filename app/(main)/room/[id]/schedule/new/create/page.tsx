@@ -2,16 +2,14 @@
 import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Button from "@/components/Button";
-import api from "@/lib/api"; // 1. (★수정★) fetch 대신 api.ts를 import
+import api from "@/lib/api";
 
 const DAYS = ["일", "월", "화", "수", "목", "금", "토"];
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 
-// 7x24 배열
 const createEmptySchedule = () =>
   Array.from({ length: 7 }, () => Array(24).fill(0));
 
-// (convertGridToCells 함수는 이전과 동일)
 const convertGridToCells = (grid: number[][]) => {
   const cells: { day: number; hour: number }[] = [];
   grid.forEach((hours, dayIndex) => {
@@ -24,7 +22,7 @@ const convertGridToCells = (grid: number[][]) => {
   return cells;
 };
 
-// (getWeekData 함수는 이전과 동일)
+// 헬퍼 함수: 날짜 계산
 function getWeekData() {
   const today = new Date();
   const dayOfWeek = today.getDay(); // 0 = 일요일, 1 = 월요일 ...
@@ -51,7 +49,7 @@ function getWeekData() {
   };
 }
 
-//-----------
+// 메인 컴포넌트
 export default function CreateNewSchedulePage() {
   const router = useRouter();
   const params = useParams();
@@ -65,7 +63,6 @@ export default function CreateNewSchedulePage() {
 
   const [weekData] = useState(getWeekData());
 
-  // (그리드 로직 4개 함수는 이전과 동일)
   const handleCellClick = (dayIndex: number, hourIndex: number) => {
     const newSchedule = careNeededSchedule.map((day) => [...day]);
     newSchedule[dayIndex][hourIndex] =
@@ -85,11 +82,8 @@ export default function CreateNewSchedulePage() {
   };
   const handleMouseUp = () => setIsDragging(false);
 
-  // 2. (★핵심 수정★) handleSubmit 함수를 axios에 맞게 수정
   const handleSubmit = async () => {
     setError("");
-
-    // (localStorage.getItem("token") 확인 로직 삭제 -> api.ts가 자동으로 처리)
 
     const numericRoomId = parseInt(roomId);
     if (isNaN(numericRoomId)) {
@@ -99,58 +93,60 @@ export default function CreateNewSchedulePage() {
 
     const payload = {
       room_id: numericRoomId,
-      week_start: weekData.apiWeekStart,
+      start_date: weekData.apiWeekStart,
     };
     console.log("백엔드로 전송할 데이터 (Body):", payload);
 
     try {
-      // --- 1단계: '주간 스케줄 껍데기' 생성 (POST /schedules/) ---
-      // (headers, credentials, method가 모두 자동으로 적용됨)
       const createResponse = await api.post("/schedules/", payload);
 
-      // (axios는 201(성공)이 아니면 'catch'로 바로 빠지므로 'if'문 삭제)
-      const createData = createResponse.data; // .json() 필요 없음
-      const week_id = createData.id;
+      const createData = createResponse.data;
 
-      // --- 2단계: '간병 필요 시간' 등록 (PUT /schedules/{week_id}/needed/) ---
-      const cellsToUpdate = convertGridToCells(careNeededSchedule);
+      const week_id = createData.schedule_id;
 
-      const updateResponse = await api.put(
-        `/schedules/${week_id}/needed/`,
-        { cells: cellsToUpdate } // body
-      );
+      if (!week_id) {
+        setError("스케줄 껍데기 생성은 되었으나 ID를 받지 못했습니다.");
+        return;
+      }
 
-      // (axios는 200(성공)이 아니면 'catch'로 바로 빠지므로 'if'문 삭제)
+      const cellsToSubmit = convertGridToCells(careNeededSchedule);
 
-      // --- 3단계: 최종 성공 ---
+      if (cellsToSubmit.length === 0) {
+        setError("간병이 필요한 시간대를 1칸 이상 선택해야 합니다.");
+        return;
+      }
+
+      const updateResponse = await api.post(`/schedules/${week_id}/needed/`, {
+        slots: cellsToSubmit,
+      });
+
       alert("새 스케줄이 생성되었습니다.");
-      router.push(`/room/${roomId}/schedule`); // 스케줄 메인 페이지로 복귀
+      window.location.href = `/room/${roomId}/schedule`;
     } catch (err: any) {
-      // 3. (★핵심 수정★) axios의 통합 에러 핸들링
       console.error("API 오류 발생:", err);
 
       if (err.response) {
-        // 서버가 400, 401, 403, 404, 409, 500 등 에러 응답을 한 경우
         const errorData = err.response.data;
         console.error("서버 응답 에러:", err.response.status, errorData);
 
-        // API 명세서에 나온 'detail' 또는 'non_field_errors'
-        const message =
+        let message =
           errorData.detail ||
-          (errorData.non_field_errors ? errorData.non_field_errors[0] : null) ||
+          (errorData.slots ? `Slots 오류: ${errorData.slots[0]}` : null) ||
+          (errorData.start_date
+            ? `날짜 오류: ${errorData.start_date[0]}`
+            : null) ||
           "알 수 없는 서버 오류입니다.";
+
         setError(message);
       } else if (err.request) {
-        // 요청은 했으나 응답을 못 받은 경우 (e.g., 네트워크 오류)
         setError("서버에서 응답이 없습니다. 네트워크를 확인해주세요.");
       } else {
-        // 요청을 설정하는 중에 에러가 난 경우
         setError(`네트워크 오류가 발생했습니다: ${err.message}`);
       }
     }
   };
 
-  // (return JSX 부분은 이전과 100% 동일)
+  // --- 렌더링 ---
   return (
     <div className="p-4">
       <p className="text-center text-gray-700 mb-4">
@@ -191,7 +187,6 @@ export default function CreateNewSchedulePage() {
         ))}
       </div>
 
-      {/* 하단 UI  */}
       <div className="flex justify-between items-center mt-4">
         <span className="text-sm text-gray-600">
           이번주 ({weekData.displayRange})

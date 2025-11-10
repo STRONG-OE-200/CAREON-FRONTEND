@@ -44,11 +44,15 @@ export default function RoomCreateSuccessClient() {
           </Button>
         </div>
         {newRoomId && (
-          <Button onClick={() => router.push(`/room/${newRoomId}/schedule`)}>
+          <Button
+            onClick={() => {
+              localStorage.setItem("currentRoomId", newRoomId);
+              window.location.href = `/room/${newRoomId}/schedule`;
+            }}
+          >
             방 입장하기
           </Button>
         )}
-        {/* 메인으로 이동 */}
         <Link href="/">메인으로 가기</Link>
       </main>
     </>
