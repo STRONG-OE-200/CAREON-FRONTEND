@@ -1,5 +1,3 @@
-// components/LogCreateModal.tsx
-
 "use client";
 import React, { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
@@ -7,13 +5,13 @@ import Button from "@/components/Button";
 import Input from "@/components/Input";
 import api from "@/lib/api";
 import { format } from "date-fns";
-import ko from "date-fns/locale/ko";
+import { ko } from "date-fns/locale/ko";
 
 // 아이콘 (임시)
 const TimeIcon = () => <span className="text-gray-400">⊙</span>;
 const MemoIcon = () => <span className="text-gray-400">□</span>;
 const ContentIcon = () => <span className="text-gray-400">■</span>;
-const UserIcon = () => <span className="text-gray-400">○</span>; // [수정] 아이콘 추가
+const UserIcon = () => <span className="text-gray-400">○</span>;
 
 type Metric = { id: number; label: string };
 type ModalProps = {
@@ -35,10 +33,7 @@ export default function LogCreateModal({
   const [logMemo, setLogMemo] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // --- ⬇️ [수정] '로그 기록자' State 추가 ⬇️ ---
   const [loggerName, setLoggerName] = useState("로딩 중...");
-  // --- ⬆️ 여기까지 ⬆️ ---
 
   useEffect(() => {
     if (isOpen) {
@@ -49,10 +44,8 @@ export default function LogCreateModal({
       setLogMemo("");
       setError("");
 
-      // --- ⬇️ [수정] 'localStorage'에서 이름 가져오기 ⬇️ ---
       const name = localStorage.getItem("name"); // 로그인 시 저장한 'name'
       setLoggerName(name || "사용자");
-      // --- ⬆️ 여기까지 ⬆️ ---
     }
   }, [isOpen]);
 
@@ -90,7 +83,6 @@ export default function LogCreateModal({
           <h2 className="text-2xl font-bold">{metric.label}</h2>
         </div>
 
-        {/* (시간, 값, 메모 UI - 수정 없음) */}
         <div className="flex items-start space-x-3">
           <TimeIcon />
           <div className="w-full">
@@ -146,7 +138,6 @@ export default function LogCreateModal({
           </div>
         </div>
 
-        {/* --- ⬇️ [수정] '로그 기록자' UI 추가 ⬇️ --- */}
         <div className="flex items-center space-x-3">
           <UserIcon />
           <div className="flex justify-between items-center w-full">
@@ -156,7 +147,6 @@ export default function LogCreateModal({
             </span>
           </div>
         </div>
-        {/* --- ⬆️ 여기까지 ⬆️ --- */}
 
         <div className="flex justify-end space-x-3 pt-4">
           <Button variant="secondary" onClick={() => onClose(false)}>

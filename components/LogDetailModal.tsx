@@ -1,5 +1,3 @@
-// components/LogDetailModal.tsx
-
 "use client";
 import React, { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
@@ -7,7 +5,7 @@ import Button from "@/components/Button";
 import Input from "@/components/Input";
 import api from "@/lib/api";
 import { format } from "date-fns";
-import ko from "date-fns/locale/ko";
+import { ko } from "date-fns/locale/ko";
 
 // 아이콘 (임시)
 const TimeIcon = () => <span className="text-gray-400">⊙</span>;
@@ -30,7 +28,6 @@ const formatLogTime = (timeOnly: string | null | undefined) => {
   }
 };
 
-// 'GET /logs/{id}' 응답 타입 (명세서 기준)
 type LogDetail = {
   id: number;
   room_id: number;
@@ -59,11 +56,7 @@ export default function LogDetailModal({
 }: ModalProps) {
   const [logData, setLogData] = useState<LogDetail | null>(null);
   const [loggerName, setLoggerName] = useState("로딩 중..."); //
-
-  // '수정' 모드 state
   const [isEditMode, setIsEditMode] = useState(false);
-
-  // 폼(Form) state
   const [logTime, setLogTime] = useState("");
   const [logDate, setLogDate] = useState("");
   const [logContent, setLogContent] = useState("");
@@ -74,12 +67,10 @@ export default function LogDetailModal({
 
   // 1. logId가 바뀌면 상세 데이터 + 로그 기록자 이름(Assumption) 가져오기
   useEffect(() => {
-    // (이름 가져오기 - CreateModal과 동일)
     const name = localStorage.getItem("name");
     setLoggerName(name || "사용자");
 
     if (logId) {
-      // (상세 데이터 가져오기)
       const fetchLogDetail = async () => {
         setIsSubmitting(true);
         setError("");
@@ -88,7 +79,6 @@ export default function LogDetailModal({
           const response = await api.get<LogDetail>(`/logs/${logId}/`);
           const data = response.data;
           setLogData(data);
-          // 폼 state도 초기화
           setLogDate(data.date_only);
           setLogTime(data.time_only.substring(0, 5)); // "08:30:00" -> "08:30"
           setLogContent(data.content);
@@ -162,7 +152,6 @@ export default function LogDetailModal({
           <h2 className="text-2xl font-bold">{metricLabel}</h2>
         </div>
 
-        {/* 1. 시간 */}
         <div className="flex items-start space-x-3">
           <TimeIcon />
           <div className="w-full">
@@ -193,7 +182,6 @@ export default function LogDetailModal({
           </div>
         </div>
 
-        {/* 2. 값 (Content) */}
         <div className="flex items-start space-x-3">
           <ContentIcon />
           <div className="w-full">
@@ -212,7 +200,6 @@ export default function LogDetailModal({
           </div>
         </div>
 
-        {/* 3. 메모 (Memo) */}
         <div className="flex items-start space-x-3">
           <MemoIcon />
           <div className="w-full">
@@ -233,7 +220,6 @@ export default function LogDetailModal({
           </div>
         </div>
 
-        {/* 4. 로그기록자 (Assumption: 현재 유저) */}
         <div className="flex items-center space-x-3">
           <UserIcon />
           <div className="flex justify-between items-center w-full">
@@ -244,14 +230,9 @@ export default function LogDetailModal({
           </div>
         </div>
 
-        {/* 5. 버튼 (상황별로 다름) */}
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
         <div className="flex justify-between items-end pt-4">
-          <Button
-            variant="danger-outline" //
-            onClick={handleDelete}
-            disabled={isSubmitting}
-          >
+          <Button onClick={handleDelete} disabled={isSubmitting}>
             삭제
           </Button>
 
