@@ -9,7 +9,7 @@ import LogCreateModal from "@/components/LogCreateModal";
 import AddMetricModal from "@/components/AddMetricModal";
 import LogDetailModal from "@/components/LogDetailModal";
 import { format } from "date-fns";
-import ko from "date-fns/locale/ko";
+import { ko } from "date-fns/locale/ko";
 import { twMerge } from "tailwind-merge";
 
 type Metric = {

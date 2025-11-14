@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useRoom } from "@/lib/RoomContext";
 import api from "@/lib/api";
 import { format, subDays, startOfDay } from "date-fns";
-import ko from "date-fns/locale/ko";
+import { ko } from "date-fns/locale/ko";
 import Button from "@/components/Button";
 import "@/lib/chartConfig";
 import { Line } from "react-chartjs-2";
