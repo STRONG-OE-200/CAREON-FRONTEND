@@ -1,9 +1,6 @@
 # CareOn (돌봄온)
 
-> 가족 간병인을 위한 실시간 스케줄 협업 서비스
-
-[Main Schedule Screenshot]
-_(핵심 기능 스크린샷 1~2장)_
+> 가족 간병인을 위한 실시간 스케줄 협업 및 간병 로그 서비스
 
 <br />
 
@@ -20,23 +17,19 @@ _(핵심 기능 스크린샷 1~2장)_
   - **확정 시간표:** 멤버별 고유 색상 + 이름으로 렌더링
   - **내 시간표:** 나에게 할당된 시간만 하이라이트
   - **과거 시간표:** 이전 스케줄 불러오기 및 이번 주로 복사
+- **간병 로그 (Log):**
+  - **항목 관리:** 방마다 "체온", "혈압" 외 커스텀 항목을 `POST`/`DELETE` API로 동적 관리
+  - **로그 생성:** 날짜/시간, 값(Content), 메모를 `POST` API로 기록
+  - **로그 조회:** `GET` API로 날짜별 로그 목록 조회 및 항목별 필터링
+  - **로그 수정/삭제:** `PATCH` / `DELETE` API를 연동한 상세 모달 구현
+  - **차트:** `Chart.js`를 활용, '체온'(일간 및 주간), '혈압'(시간대별 주간) 추이 시각화
 
 <br />
 
----
-
 ## 🚀 향후 개발 계획 (Future Plans)
 
-현재 핵심 기능인 스케줄 협업을 완성했으며, 다음과 같은 기능들을 추가하여 서비스를 고도화할 예정입니다.
-
-- **간병 로그 (Log):**
-  - 환자의 상태(식사, 투약, 특이사항)를 멤버들이 실시간으로 기록하고 공유하는 '디지털 간병 일지' 기능을 구현할 예정입니다.
-- **캘린더 (Calendar):**
-  - 간병 관련 일정을 월별 캘린더 뷰로 한눈에 볼 수 있는 기능을 추가할 계획입니다.
-- **챗봇 (Chatbot):**
-  - 간병 관련 정책, 멘탈 케어, 안내를 챗봇 형태로 제공하는 기능을 추가할 계획입니다.
-
----
+- **캘린더 (Calendar):** 간병 관련 스케줄을 월별 캘린더 뷰로 조회
+- **챗봇 (Chatbot):** 간병 정보 제공 및 간단한 질의응답 기능
 
 <br />
 
@@ -46,6 +39,7 @@ _(핵심 기능 스크린샷 1~2장)_
 - **Styling:** Tailwind CSS
 - **State Management:** React Context (`useContext`), `localStorage`
 - **API Client:** Axios
+- **Data Visualization:** `Chart.js`, `date-fns`
 - **Deployment:** Vercel
 
 <br />
@@ -54,10 +48,12 @@ _(핵심 기능 스크린샷 1~2장)_
 
 - **상태 동기화 & 캐시 버그 해결:**
   - 방 생성/스케줄 확정 직후, UI가 갱신되지 않는 **"오래된 정보(Stale State)"** 버그 발생.
-  - `window.location.href` (강제 새로고침), `usePathname` (Context 재호출), API URL 캐시 버스터(`&_t=...`) 등을 적용하여 **Next.js/Vercel의 데이터 캐시** 문제 해결.
+  - `window.location.href` (강제 새로고침), `usePathname` (Context 재호출), API URL 캐시 버스터(`&_t=...`), `Cache-Control` 헤더 등을 적용하여 **Next.js/Vercel의 데이터 캐시** 문제 해결.
 - **전역 상태 관리 설계:**
   - `React Context` (`RoomContext`)를 도입하여, 여러 페이지와 레이아웃(Layout, Page, Sidebar)이 `roomId`, `isOwner`, `scheduleStatus` (none/draft/finalized) 상태를 실시간으로 공유하도록 설계.
 - **API 데이터 변환:**
-  - `[[0,1]]` (UI 그리드) ↔ `[{day, hour}]` (API `slots` 배열)
-  - `[[{isCareNeeded: true}]]` (API 객체 그리드) → `[[0,1]]` (UI 숫자 그리드)
   - API 명세서에 맞춰 프론트엔드에서 데이터를 실시간으로 변환하는 로직 구현.
+  - (예: `[[0,1]]` ↔ `[{day, hour}]`, `log.metric` ↔ `log.metric_label`)
+- **동적 ID 처리:**
+  - `localStorage`의 `myUserId`와 API 응답의 `owner.user_id`를 비교하여 방장/멤버 UI를 동적으로 렌더링.
+  - `GET /metrics` API로 "항목 목록"을 받아와 로그 필터 버튼을 동적으로 생성.
