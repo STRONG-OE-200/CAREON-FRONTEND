@@ -12,6 +12,12 @@ import {
 
 const DAY_MAP = ["일", "월", "화", "수", "목", "금", "토"];
 
+type CellData = {
+  isCareNeeded: boolean;
+  availableMembers: any[];
+  confirmedMember: any | null;
+};
+
 type Selections = Record<string, { start: number; end: number }>;
 
 //메인 컴포넌트
@@ -37,7 +43,7 @@ export default function ParticipatePage() {
         const response = await api.get(
           `/schedules/?room_id=${roomId}&week_id=${weekId}`
         );
-        const apiGrid = response.data.masterGrid;
+        const apiGrid: CellData[][] = response.data.masterGrid;
 
         if (!Array.isArray(apiGrid)) {
           throw new Error("API 응답이 그리드 형식이 아닙니다.");
@@ -46,8 +52,10 @@ export default function ParticipatePage() {
         const blocks = convertApiGridToBlocks(apiGrid);
         setNeededBlocks(blocks);
 
-        const numericGrid = apiGrid.map((day) =>
-          day.map((cell) => (cell.isCareNeeded ? 1 : 0))
+        const numericGrid = apiGrid.map(
+          (
+            day: CellData[] //
+          ) => day.map((cell: CellData) => (cell.isCareNeeded ? 1 : 0)) //
         );
         setNeededSummary(convertNumericGridToSummary(numericGrid, DAY_MAP));
 
