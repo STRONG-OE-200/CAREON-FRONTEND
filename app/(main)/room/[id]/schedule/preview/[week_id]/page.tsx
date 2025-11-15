@@ -182,6 +182,7 @@ export default function PreviewPage() {
     return <div className="p-8 text-center text-red-500">{error}</div>;
   }
 
+  //렌더링
   return (
     <div className="p-4">
       <h1 className="text-xl font-bold text-center mb-1">환자분의 시간표</h1>
@@ -205,7 +206,7 @@ export default function PreviewPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-8 gap-1 p-4 bg-white rounded-lg shadow-md">
+      <div className="grid grid-cols-8 gap-1 bg-white rounded-lg shadow-md">
         <div />
         {DAYS.map((day) => (
           <div key={day} className="text-center font-semibold text-xs py-2">
