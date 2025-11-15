@@ -170,7 +170,7 @@ export default function ImportSchedulePage() {
             variant="primary"
             onClick={handleApplyClick}
             disabled={isSubmitting}
-            className="w-full"
+            className="fixed bottom-17 left-2 w-94"
           >
             {isSubmitting ? "적용 중..." : "이번주에도 적용하기"}
           </Button>
