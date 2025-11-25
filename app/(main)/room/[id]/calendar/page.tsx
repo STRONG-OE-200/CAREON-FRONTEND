@@ -6,7 +6,6 @@ import Button from "@/components/Button";
 import CalendarCreateModal from "@/components/CalendarCreateModal";
 import CalendarDetailModal from "@/components/CalendarDetailModal";
 import { format, startOfMonth, endOfMonth } from "date-fns";
-import ko from "date-fns/locale/ko";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { MEMBER_COLORS } from "@/lib/colors";
