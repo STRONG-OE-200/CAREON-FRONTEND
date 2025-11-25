@@ -148,7 +148,7 @@ export default function LogDetailModal({
         </div>
 
         <div className="flex items-start space-x-3">
-          <Image src="/log-time.svg" height={16} width={16} />
+          <Image src="/log-time.svg" height={16} width={16} alt="time" />
           <div className="w-full">
             <p className="font-semibold">시간</p>
             {isEditMode ? (
@@ -178,7 +178,7 @@ export default function LogDetailModal({
         </div>
 
         <div className="flex items-start space-x-3">
-          <Image src="/log-person.svg" height={16} width={16} />
+          <Image src="/log-person.svg" height={16} width={16} alt="data" />
           <div className="w-full">
             <p className="font-semibold">값</p>
             {isEditMode ? (
@@ -196,7 +196,7 @@ export default function LogDetailModal({
         </div>
 
         <div className="flex items-start space-x-3">
-          <Image src="/log-memo.svg" height={16} width={16} />
+          <Image src="/log-memo.svg" height={16} width={16} alt="memo" />
           <div className="w-full">
             <p className="font-semibold">메모</p>
             {isEditMode ? (
@@ -216,7 +216,7 @@ export default function LogDetailModal({
         </div>
 
         <div className="flex items-center space-x-3">
-          <Image src="/log-person.svg" height={16} width={16} />
+          <Image src="/log-person.svg" height={16} width={16} alt="user" />
           <div className="flex justify-between items-center w-full">
             <p className="font-semibold">로그기록자</p>
             <span className="px-4 py-1 bg-gray-200 rounded-full text-sm font-medium">

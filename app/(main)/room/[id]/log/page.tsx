@@ -164,7 +164,7 @@ export default function LogPage() {
       <div className="p-4">
         <div className="flex justify-between items-baseline mb-4">
           <button onClick={() => handleDateChange(-1)}>
-            <Image src="/log-left.svg" width={12} height={12} />
+            <Image src="/log-left.svg" width={12} height={12} alt="yesterday" />
           </button>
           <h1 className="text-xl font-medium mb-4 text-main-purple">
             {formatCurrentDate(currentDate)}
@@ -172,7 +172,7 @@ export default function LogPage() {
           <button
             onClick={() => handleDateChange(1)} //
           >
-            <Image src="/log-right.svg" width={12} height={12} />
+            <Image src="/log-right.svg" width={12} height={12} alt="tomorrow" />
           </button>
         </div>
 
@@ -259,7 +259,7 @@ export default function LogPage() {
             onClick={handlePlusClick}
             className="w-12 h-12 flex items-center justify-center rounded-full text-3xl"
           >
-            <Image src="/log-plus.svg" width={24} height={24} />
+            <Image src="/log-plus.svg" width={24} height={24} alt="add" />
           </button>
         </div>
 
