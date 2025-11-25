@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import api from "@/lib/api";
 import axios from "axios";
-const { showAlert } = useAlert();
+import { useAlert } from "@/lib/AlertContext";
 
 export default function LogoutPage() {
   const { showAlert } = useAlert();
