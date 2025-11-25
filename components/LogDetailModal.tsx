@@ -6,12 +6,7 @@ import Input from "@/components/Input";
 import api from "@/lib/api";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale/ko";
-
-// 아이콘 (임시)
-const TimeIcon = () => <span className="text-gray-400">⊙</span>;
-const MemoIcon = () => <span className="text-gray-400">□</span>;
-const ContentIcon = () => <span className="text-gray-400">■</span>;
-const UserIcon = () => <span className="text-gray-400">○</span>;
+import Image from "next/image";
 
 // "08:30:00" -> "오전 8:30"
 const formatLogTime = (timeOnly: string | null | undefined) => {
@@ -148,12 +143,12 @@ export default function LogDetailModal({
     <Modal isOpen={!!logId} onClose={() => onClose(false)}>
       <div className="flex flex-col space-y-6 p-4">
         <div className="flex items-center space-x-3">
-          <span className="w-1.5 h-6 bg-yellow-400 rounded-full"></span>
-          <h2 className="text-2xl font-bold">{metricLabel}</h2>
+          <span className="w-1.5 h-6 bg-sub-purple rounded-full"></span>
+          <h2 className="text-xl font-medium">{metricLabel}</h2>
         </div>
 
         <div className="flex items-start space-x-3">
-          <TimeIcon />
+          <Image src="/log-time.svg" height={16} width={16} />
           <div className="w-full">
             <p className="font-semibold">시간</p>
             {isEditMode ? (
@@ -183,7 +178,7 @@ export default function LogDetailModal({
         </div>
 
         <div className="flex items-start space-x-3">
-          <ContentIcon />
+          <Image src="/log-person.svg" height={16} width={16} />
           <div className="w-full">
             <p className="font-semibold">값</p>
             {isEditMode ? (
@@ -201,7 +196,7 @@ export default function LogDetailModal({
         </div>
 
         <div className="flex items-start space-x-3">
-          <MemoIcon />
+          <Image src="/log-memo.svg" height={16} width={16} />
           <div className="w-full">
             <p className="font-semibold">메모</p>
             {isEditMode ? (
@@ -221,7 +216,7 @@ export default function LogDetailModal({
         </div>
 
         <div className="flex items-center space-x-3">
-          <UserIcon />
+          <Image src="/log-person.svg" height={16} width={16} />
           <div className="flex justify-between items-center w-full">
             <p className="font-semibold">로그기록자</p>
             <span className="px-4 py-1 bg-gray-200 rounded-full text-sm font-medium">
@@ -230,33 +225,21 @@ export default function LogDetailModal({
           </div>
         </div>
 
-        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-        <div className="flex justify-between items-end pt-4">
-          <Button onClick={handleDelete} disabled={isSubmitting}>
-            삭제
-          </Button>
-
+        {/* 버튼들 */}
+        <div className="flex gap-2 justify-end shrink-0">
           {isEditMode ? (
-            <div className="flex space-x-3">
-              <Button
-                variant="secondary"
-                onClick={() => setIsEditMode(false)}
-                disabled={isSubmitting}
-              >
-                취소
-              </Button>
-              <Button
-                variant="primary"
-                onClick={handleUpdate}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "저장 중..." : "저장"}
-              </Button>
-            </div>
+            <button onClick={handleUpdate} disabled={isSubmitting}>
+              저장
+            </button>
           ) : (
-            <Button variant="primary" onClick={() => setIsEditMode(true)}>
-              수정
-            </Button>
+            <>
+              <button onClick={() => setIsEditMode(true)} className="text-gray">
+                수정
+              </button>
+              <button onClick={handleDelete} className="text-red-500">
+                삭제
+              </button>
+            </>
           )}
         </div>
       </div>

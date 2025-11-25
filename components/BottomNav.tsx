@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -10,7 +11,7 @@ export default function BottomNav() {
   useEffect(() => {
     const storedRoomId = localStorage.getItem("currentRoomId");
     setRoomId(storedRoomId);
-  }, []);
+  }, [pathname]);
 
   const fallbackPath = "/login/success";
 
@@ -18,19 +19,24 @@ export default function BottomNav() {
     {
       name: "스케줄",
       href: roomId ? `/room/${roomId}/schedule` : fallbackPath,
+      icon: "/bn-schedule.svg",
     },
-    { name: "로그", href: roomId ? `/room/${roomId}/log` : fallbackPath },
+    {
+      name: "로그",
+      href: roomId ? `/room/${roomId}/log` : fallbackPath,
+      icon: "/bn-log.svg",
+    },
     {
       name: "캘린더",
       href: roomId ? `/room/${roomId}/calendar` : fallbackPath,
+      icon: "/bn-calendar.svg",
     },
-    { name: "챗봇", href: roomId ? `/room/${roomId}/chatbot` : fallbackPath },
-    { name: "마이페이지", href: "/mypage" },
+    { name: "마이페이지", href: "/mypage", icon: "/bn-mypage.svg" },
   ];
 
   return (
-    <nav className="sticky bottom-0 w-full bg-white border-t">
-      <div className="flex justify-around items-center h-16">
+    <nav className="sticky bottom-0 w-full bg-white border-t border-sub-purple">
+      <div className="flex justify-around items-center h-20">
         {navLinks.map((link) => {
           const isActive = pathname.startsWith(link.href);
 
@@ -38,10 +44,16 @@ export default function BottomNav() {
             <Link
               key={link.name}
               href={link.href}
-              className={`flex flex-col items-center text-sm ${
-                isActive ? "text-blue-600 font-bold" : "text-gray-500"
-              }`}
+              className={`flex flex-col items-center justify-center gap-1 text-base text-main-purple`}
             >
+              <div className="relative w-6 h-6">
+                <Image
+                  src={link.icon}
+                  alt={link.name}
+                  fill
+                  className={isActive ? "" : "opacity-50"} // 비활성일 때 흐리게
+                />
+              </div>
               <span>{link.name}</span>
             </Link>
           );

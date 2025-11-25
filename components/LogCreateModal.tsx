@@ -6,12 +6,7 @@ import Input from "@/components/Input";
 import api from "@/lib/api";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale/ko";
-
-// 아이콘 (임시)
-const TimeIcon = () => <span className="text-gray-400">⊙</span>;
-const MemoIcon = () => <span className="text-gray-400">□</span>;
-const ContentIcon = () => <span className="text-gray-400">■</span>;
-const UserIcon = () => <span className="text-gray-400">○</span>;
+import Image from "next/image";
 
 type Metric = { id: number; label: string };
 type ModalProps = {
@@ -77,41 +72,17 @@ export default function LogCreateModal({
 
   return (
     <Modal isOpen={isOpen} onClose={() => onClose(false)}>
-      <div className="flex flex-col space-y-6 p-4">
+      <div className="flex flex-col space-y-6 p-2">
         <div className="flex items-center space-x-3">
-          <span className="w-1.5 h-6 bg-yellow-400 rounded-full"></span>
-          <h2 className="text-2xl font-bold">{metric.label}</h2>
-        </div>
-
-        <div className="flex items-start space-x-3">
-          <TimeIcon />
-          <div className="w-full">
-            <p className="font-semibold">시간</p>
-            {/* ... (input date, time) ... */}
-            <div className="flex items-center justify-between mt-1">
-              <input
-                type="date"
-                value={logDate}
-                onChange={(e) => setLogDate(e.target.value)}
-                className="text-gray-700"
-              />
-              <input
-                type="time"
-                value={logTime}
-                onChange={(e) => setLogTime(e.target.value)}
-                className="font-semibold text-lg"
-              />
-            </div>
-            <p className="text-sm text-gray-500 mt-1">{displayDate}</p>
-          </div>
+          <h2 className="text-xl font-medium">{metric.label}</h2>
         </div>
         <div className="flex items-start space-x-3">
-          <ContentIcon />
+          <span className="w-1.5 h-6 bg-sub-purple rounded-full"></span>
           <div className="w-full">
-            <p className="font-semibold">
+            <p className="font-light">
               값 (필수)
-              {metric.label === "체온" && " (예: 37.5)"}
-              {metric.label === "혈압" && " (예: 120/80)"}
+              {metric.label === "체온" && " (형식: 37.5)"}
+              {metric.label === "혈압" && " (형식: 120/80)"}
             </p>
             <Input
               type="text"
@@ -124,12 +95,30 @@ export default function LogCreateModal({
           </div>
         </div>
         <div className="flex items-start space-x-3">
-          <MemoIcon />
+          <Image src="/log-time.svg" height={16} width={16} />
           <div className="w-full">
-            <p className="font-semibold">메모 (선택)</p>
+            <p className="font-light">시간</p>
+            {/* ... (input date, time) ... */}
+            <div className="flex items-center justify-between mt-1">
+              <p>{displayDate}</p>
+
+              <input
+                type="time"
+                value={logTime}
+                onChange={(e) => setLogTime(e.target.value)}
+                className="font-semibold text-md"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-start space-x-3">
+          <Image src="/log-memo.svg" height={16} width={16} />
+          <div className="w-full">
+            <p className="font-light">메모 (선택)</p>
             <Input
               type="text"
-              placeholder="부가 설명을 입력하세요 (50자 이내)"
+              placeholder="50자 이내로 부가 설명을 입력하세요"
               value={logMemo}
               onChange={(e) => setLogMemo(e.target.value)}
               maxLength={50}
@@ -139,9 +128,9 @@ export default function LogCreateModal({
         </div>
 
         <div className="flex items-center space-x-3">
-          <UserIcon />
+          <Image src="/log-person.svg" height={16} width={16} />
           <div className="flex justify-between items-center w-full">
-            <p className="font-semibold">로그기록자</p>
+            <p className="font-light">로그기록자</p>
             <span className="px-4 py-1 bg-gray-200 rounded-full text-sm font-medium">
               {loggerName}
             </span>

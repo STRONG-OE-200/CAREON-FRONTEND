@@ -177,12 +177,12 @@ export default function TemperatureChartPage() {
 
   return (
     <div className="p-4 space-y-6">
-      <h1 className="text-xl font-bold text-center">기록 차트 보기</h1>
+      <h1 className="text-xl font-medium text-main-purple text-center">
+        기록 차트 보기
+      </h1>
 
       <div>
-        <h2 className="text-lg font-semibold mb-2">
-          오늘의 시간대별 체온 차트
-        </h2>
+        <h2 className="text-lg text-center mb-2">오늘의 시간대별 체온 차트</h2>
         <div className="h-64 bg-white p-2 rounded-lg shadow-md">
           {dailyData.length > 1 ? (
             <Line options={chartOptions} data={dailyChartData} />
@@ -197,7 +197,7 @@ export default function TemperatureChartPage() {
       </div>
 
       <div>
-        <h2 className="text-lg font-semibold mb-2">주간 체온 차트 (평균)</h2>
+        <h2 className="text-lg text-center mb-2">주간 체온 차트 (평균)</h2>
         <div className="h-64 bg-white p-2 rounded-lg shadow-md">
           <Line options={chartOptions} data={weeklyChartData} />
         </div>

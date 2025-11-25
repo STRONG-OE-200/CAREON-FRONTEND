@@ -18,19 +18,19 @@ export default function NewSchedulePage() {
       <nav className="flex flex-col">
         <Link
           href={`/room/${roomId}/schedule/new/import`}
-          className="py-4 border-b text-lg"
+          className="py-4 border-b border-main-purple font-light text-lg"
         >
           이전 스케줄 목록 불러오기
         </Link>
         <Link
           href={`/room/${roomId}/schedule/preview/${week_id}`}
-          className="py-4 border-b text-lg"
+          className="py-4 border-b border-main-purple font-light text-lg"
         >
           임시저장된 시간표 보기
         </Link>
         <Link
           href={`/room/${roomId}/schedule/new/create`}
-          className="py-4 border-b text-lg"
+          className="py-4 border-b border-main-purple font-light text-lg"
         >
           새로운 시간표 만들기
         </Link>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AlertProvider } from "@/lib/AlertContext";
 
 export const metadata: Metadata = {
   title: "Care On",
@@ -21,7 +22,9 @@ export default function RootLayout({
            나중에 폰트가 정해지면 tailwind.config.ts에 등록하고
            여기에 className="font-sans" 등을 추가하면 됩니다.
       */}
-      <body>{children}</body>
+      <body>
+        <AlertProvider>{children}</AlertProvider>
+      </body>
     </html>
   );
 }

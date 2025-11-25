@@ -5,13 +5,11 @@ type Member = {
   id: number;
   name: string;
 };
-// API 응답(masterGrid)의 각 셀 타입
 type CellData = {
   isCareNeeded: boolean;
   availableMembers: Member[];
   confirmedMember: Member | null;
 };
-// 이 컴포넌트가 받는 Props
 type GridProps = {
   masterGrid: CellData[][];
   myUserId: string;
@@ -82,7 +80,7 @@ export default function ScheduleGrid({
   //렌더링
   return (
     <div>
-      <div className="grid grid-cols-8 gap-1 bg-white rounded-lg shadow-md">
+      <div className="grid grid-cols-8 gap-1 rounded-lg shadow-md">
         {/* 요일 헤더 */}
         <div className="w-5" />
         {DAYS.map((day) => (

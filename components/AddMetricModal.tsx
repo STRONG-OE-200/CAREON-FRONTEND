@@ -1,5 +1,3 @@
-// components/AddMetricModal.tsx
-
 "use client";
 import React, { useState } from "react";
 import Modal from "@/components/Modal";
@@ -13,8 +11,6 @@ type ModalProps = {
   roomId: string;
 };
 
-// image_58180f.png 기반의 하드코딩된 항목들
-// (이 목록을 API로 받아올 수 있다면, 나중에 수정)
 const PREDEFINED_METRICS = {
   일반: [
     "세면/목욕",
@@ -44,7 +40,6 @@ export default function AddMetricModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  // '항목 추가' API 호출 함수
   const handleAddMetric = async (label: string) => {
     if (!label) return;
 
@@ -52,7 +47,6 @@ export default function AddMetricModal({
     setError("");
 
     try {
-      // API 명세서(POST /rooms/{room_id}/metrics/)에 따라 호출
       await api.post(`/rooms/${roomId}/metrics/`, {
         label: label,
         // sort_order는 nullable(Y)이므로 생략

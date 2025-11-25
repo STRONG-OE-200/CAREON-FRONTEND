@@ -18,7 +18,8 @@ export default function Modal({
 }: ModalProps) {
   if (!isOpen) return null;
 
-  const modalBoxStyle = "bg-white rounded-lg shadow-xl p-6 w-full max-w-md";
+  const modalBoxStyle =
+    "rounded-3xl shadow mx-5 p-6 w-full max-w-md border border-bg-purple bg-btn-white";
 
   // props로 받은 className과 기본 스타일을 충돌 없이 합칩니다
   const mergedModalClassName = twMerge(modalBoxStyle, className);
