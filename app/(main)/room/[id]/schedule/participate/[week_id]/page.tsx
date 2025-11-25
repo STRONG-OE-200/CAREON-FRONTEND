@@ -9,6 +9,7 @@ import {
   convertNumericGridToSummary,
   NeededBlock,
 } from "@/lib/scheduleUtils";
+import { useAlert } from "@/lib/AlertContext";
 
 const DAY_MAP = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -22,6 +23,7 @@ type Selections = Record<string, { start: number; end: number }>;
 
 //메인 컴포넌트
 export default function ParticipatePage() {
+  const { showAlert } = useAlert();
   const router = useRouter();
   const params = useParams();
   const { roomId } = useRoom();
@@ -97,7 +99,7 @@ export default function ParticipatePage() {
       await api.post(`/schedules/${weekId}/availability/`, {
         slots: cellsToSubmit,
       });
-      alert("내 시간이 저장되었습니다.");
+      showAlert("내 시간이 저장되었습니다.");
       router.push(`/room/${roomId}/schedule`);
     } catch (err: any) {
       console.error("저장 API 오류:", err);
@@ -105,7 +107,7 @@ export default function ParticipatePage() {
     }
   };
 
-  // --- 8. 렌더링 ---
+  //렌더링
   if (isLoading) {
     return <div className="p-8 text-center">필요 시간 로딩 중...</div>;
   }
@@ -114,12 +116,15 @@ export default function ParticipatePage() {
     <div className="flex flex-col flex-1">
       <div className="flex-1 overflow-auto p-4">
         <div className="mb-6">
-          <p className="text-center text-lg font-bold mb-4">간병 필요 시간</p>
-          <div className="p-3 bg-blue-50 rounded-lg space-y-1">
+          <p className="text-center text-lg font-semibold mb-2">
+            간병 필요 시간
+          </p>
+          <div className="p-3 bg-btn-white rounded-2xl space-y-1">
             {neededSummary.length > 0 ? (
               neededSummary.map((line) => (
                 <p key={line} className="text-gray-700 font-medium">
                   {line}
+                  <hr className="text-bg-purple" />
                 </p>
               ))
             ) : (
@@ -131,7 +136,7 @@ export default function ParticipatePage() {
         </div>
 
         <div className="space-y-4">
-          <p className="text-center text-lg font-bold mb-4">
+          <p className="text-center text-lg font-semibold mb-4">
             내가 가능한 시간 선택
           </p>
           {neededBlocks.length === 0 && !isLoading && (
@@ -156,7 +161,7 @@ export default function ParticipatePage() {
         </div>
       </div>
 
-      <div className="p-4 bg-gray-100 flex-shrink-0">
+      <div className="p-4 sticky mb-20 flex-shrink-0">
         {error && <p className="text-sm text-red-500 mb-2">{error}</p>}
         <Button variant="primary" onClick={handleSubmit} className="w-full">
           내 시간 저장하기
@@ -205,7 +210,7 @@ function TimeBlockInput({ block, selection, onChange }: BlockInputProps) {
   if (!selection) return null; //
 
   return (
-    <div className="p-3 bg-white rounded-lg shadow-sm">
+    <div className="p-3 rounded-lg shadow-md">
       <p className="font-semibold text-gray-800 mb-2">
         {`${DAY_MAP[block.day]}요일 ${block.start}:00 - ${block.end}:00`}
       </p>

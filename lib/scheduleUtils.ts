@@ -1,6 +1,3 @@
-// lib/scheduleUtils.ts
-
-// API 응답(masterGrid)의 각 셀 타입
 type CellData = {
   isCareNeeded: boolean;
   availableMembers: any[];
@@ -22,7 +19,7 @@ export const convertNumericGridToSummary = (
 ) => {
   const summary: string[] = [];
   grid.forEach((hours, dayIndex) => {
-    let daySummary = `${DAY_MAP[dayIndex]}: `;
+    let daySummary = `${DAY_MAP[dayIndex]} `;
     let ranges: string[] = [];
     let startHour: number | null = null;
 

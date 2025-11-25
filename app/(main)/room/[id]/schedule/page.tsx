@@ -95,7 +95,7 @@ export default function SchedulePage() {
 
     return (
       <div className="p-4">
-        <h1 className="text-xl font-bold text-center mb-4">
+        <h1 className="text-xl font-medium text-center mb-4">
           이번주 확정 시간표
         </h1>
         <ScheduleGrid

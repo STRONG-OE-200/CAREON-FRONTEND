@@ -5,6 +5,7 @@ import Button from "@/components/Button";
 import Modal from "@/components/Modal";
 import api from "@/lib/api";
 import { MEMBER_COLORS } from "@/lib/colors";
+import { useAlert } from "@/lib/AlertContext";
 
 type Member = {
   id: number;
@@ -32,6 +33,7 @@ const CONFLICT_COLORS = ["#C8CAFA", "#9CA0F5", "#767AF0", "#5C61EA"];
 
 //메인 컴포넌트
 export default function PreviewPage() {
+  const { showAlert } = useAlert();
   const router = useRouter();
   const params = useParams();
   const roomId = params.id as string;
@@ -166,7 +168,7 @@ export default function PreviewPage() {
       await api.post(`/schedules/${weekId}/finalize/`, {
         assignments: assignments,
       });
-      alert("스케줄이 최종 확정되었습니다.");
+      showAlert("스케줄이 최종 확정되었습니다.");
       window.location.href = `/room/${roomId}/schedule`;
     } catch (err: any) {
       console.error("최종 확정 실패:", err);
@@ -185,7 +187,7 @@ export default function PreviewPage() {
   //렌더링
   return (
     <div className="p-4">
-      <h1 className="text-xl font-bold text-center mb-1">환자분의 시간표</h1>
+      <h1 className="text-xl font-bold text-center mb-1">임시 시간표</h1>
       <h2 className="text-lg font-semibold text-center text-gray-700 mb-4"></h2>
 
       <div className="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm">
@@ -206,7 +208,7 @@ export default function PreviewPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-8 gap-1 bg-white rounded-lg shadow-md">
+      <div className="grid grid-cols-8 gap-1 rounded-lg shadow-md pb-4 mb-20">
         <div />
         {DAYS.map((day) => (
           <div key={day} className="text-center font-semibold text-xs py-2">
@@ -251,13 +253,13 @@ export default function PreviewPage() {
         ))}
       </div>
 
-      <div className="flex justify-end items-center mt-4">
+      <div className="fixed bottom-24 z-10 right-4">
         <Button
           variant="primary"
           onClick={handleSubmitFinalize}
           disabled={isSubmitting}
         >
-          {isSubmitting ? "확정 중..." : "이대로 스케줄 확정하기"}
+          {isSubmitting ? "확정 중..." : "저장하기"}
         </Button>
       </div>
 

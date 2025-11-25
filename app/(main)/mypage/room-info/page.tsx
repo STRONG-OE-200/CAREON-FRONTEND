@@ -2,8 +2,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Button from "@/components/Button";
 import api from "@/lib/api";
+import { useAlert } from "@/lib/AlertContext";
 
 type RoomInfo = {
   patient: string;
@@ -24,6 +24,7 @@ function LoadingSpinner() {
 }
 
 export default function RoomInfoPage() {
+  const { showAlert } = useAlert();
   const router = useRouter();
   const [roomInfo, setRoomInfo] = useState<RoomInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,7 +36,7 @@ export default function RoomInfoPage() {
     const roomId = localStorage.getItem("currentRoomId");
 
     if (!token || !roomId) {
-      alert("로그인이 필요합니다.");
+      showAlert("로그인이 필요합니다.");
       router.push("/login");
       return;
     }
@@ -83,8 +84,6 @@ export default function RoomInfoPage() {
     fetchRoomData();
   }, [router]);
 
-  //(방 나가기, 멤버 내보내기 함수 주석 - 동일)
-
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -95,53 +94,60 @@ export default function RoomInfoPage() {
 
   return (
     <>
-      <div>
-        <h1 className="my-10 ml-5 text-3xl">우리 방 정보</h1>
-
+      <h1 className="text-[22px] text-ex-purple font-medium text-center mt-7">
+        돌봄온
+      </h1>
+      <div className="px-5 pt-5">
+        <h2 className="text-xl">우리 방 정보</h2>
+        <hr className="border-t border-bg-purple w-[350px] pb-5" />
         {roomInfo ? (
-          <div className="p-5 m-5 gap-y-5 gap-x-8 border rounded-2xl grid grid-cols-3 items-center">
-            <label className="text-2xl">환자명</label>
-            <p className="text-2xl col-span-2">{roomInfo.patient}</p>
-            <label className="text-2xl">환자코드</label>
-            <p className="text-2xl col-span-2">{roomInfo.inviteCode}</p>
+          <div className="p-5 m-5 gap-y-5 gap-x-8 rounded-2xl grid grid-cols-3 items-center bg-btn-white shadow shadow-bg-purple">
+            <label className="text-base">환자명</label>
+            <p className="text-base col-span-2">{roomInfo.patient}</p>
+            <label className="text-base">환자코드</label>
+            <p className="text-base col-span-2">{roomInfo.inviteCode}</p>
             {roomInfo.owner && (
               <>
-                <label className="text-2xl">방장</label>
-                <p className="text-2xl col-span-2">
+                <label className="text-base">방장</label>
+                <p className="text-base col-span-2">
                   {roomInfo.owner.relation} {roomInfo.owner.user_name}
                 </p>
               </>
             )}
-            <label className="text-2xl self-start">구성원</label>
+            <label className="text-base self-start">구성원</label>
             <div className="col-span-2">
               {roomInfo.members.length > 0 ? (
                 roomInfo.members.map((member) => (
                   <div key={member.user_id}>
-                    <p className="text-2xl">
+                    <p className="text-base">
                       {member.relation} {member.user_name}
                     </p>
                   </div>
                 ))
               ) : (
-                <p className="text-2xl">참여한 구성원이 없습니다.</p>
+                <p className="text-base">참여한 구성원이 없습니다.</p>
               )}
             </div>
           </div>
         ) : (
-          <p className="text-2xl">방 정보를 불러오지 못했습니다.</p>
+          <p className="text-base">방 정보를 불러오지 못했습니다.</p>
         )}
       </div>
-      <div className="flex flex-col mx-5 my-7 gap-5 text-2xl">
+      <div className="flex flex-col mx-10 my-7 gap-5 text-base">
         {isOwner ? (
           <>
-            <Link href="/mypage/sendout/">구성원 내보내기</Link>
-            <Link href="/mypage/delete-room/" className="text-red-500">
+            <Link href="/mypage/sendout/" className="text-lg">
+              구성원 내보내기
+            </Link>
+            <Link href="/mypage/delete-room/" className="text-red-500 text-lg">
               방 삭제하기
             </Link>
           </>
         ) : (
           <>
-            <Link href="/mypage/leave-room/">방 나가기</Link>
+            <Link href="/mypage/leave-room/" className="text-lg">
+              방 나가기
+            </Link>
           </>
         )}
       </div>

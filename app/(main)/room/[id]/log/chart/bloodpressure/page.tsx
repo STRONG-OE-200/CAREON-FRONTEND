@@ -73,7 +73,7 @@ export default function BloodPressureChartPage() {
         }
         setBpMetricId(bpMetric.id);
 
-        // 2. 지난 7일간의 '혈압' 로그 가져오기
+        // 지난 7일간의 '혈압' 로그 가져오기
         const datePromises: Promise<any>[] = [];
         const labels: string[] = [];
         const today = startOfDay(new Date());
@@ -118,14 +118,14 @@ export default function BloodPressureChartPage() {
   return (
     <>
       <div className="p-4 space-y-6">
-        <h1 className="text-xl font-bold text-center">
+        <h1 className="text-xl text-main-purple text-center">
           주간 혈압 차트 (시간대별 평균)
         </h1>
 
         {/* 4개의 차트 렌더링 */}
         {chartData.map((data, index) => (
           <div key={index}>
-            <h2 className="text-lg font-semibold mb-2">
+            <h2 className="text-lg mb-2">
               {
                 [
                   "오전 (0-6시)",

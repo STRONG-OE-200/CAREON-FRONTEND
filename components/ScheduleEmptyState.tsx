@@ -14,7 +14,7 @@ export default function ScheduleEmptyState({
   isOwner,
 }: Props) {
   return (
-    <div>
+    <div className="my-[200px] flex flex-col items-center justify-center text-center gap-5 font-light text-lg">
       {isOwner ? (
         <>
           <p>
@@ -22,7 +22,13 @@ export default function ScheduleEmptyState({
             <br />
             스케줄을 만들어주세요
           </p>
-          <Button onClick={onScheduleCreateClick}>스케줄 생성하기</Button>
+          <Button
+            variant="secondary"
+            className="w-48"
+            onClick={onScheduleCreateClick}
+          >
+            스케줄 생성하기
+          </Button>
         </>
       ) : (
         <p>

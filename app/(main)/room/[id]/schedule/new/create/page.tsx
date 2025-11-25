@@ -4,6 +4,7 @@ import { useRouter, useParams } from "next/navigation";
 import Button from "@/components/Button";
 import api from "@/lib/api";
 import TimeRangeInput from "@/components/TimeRangeInput";
+import { useAlert } from "@/lib/AlertContext";
 
 function getWeekData() {
   const today = new Date();
@@ -30,7 +31,7 @@ const convertRangesToCells = (ranges: TimeRange[]) => {
   const cells: { day: number; hour: number }[] = [];
   ranges.forEach((range) => {
     for (let hour = range.start; hour < range.end; hour++) {
-      // (중복 방지를 위해 간단한 체크 - 더 복잡한 로직이 필요할 수 있음)
+      // 중복 방지 체크
       if (!cells.some((cell) => cell.day === range.day && cell.hour === hour)) {
         cells.push({ day: range.day, hour: hour });
       }
@@ -49,6 +50,7 @@ type TimeRange = {
 
 // 메인 컴포넌트
 export default function CreateNewSchedulePage() {
+  const { showAlert } = useAlert();
   const router = useRouter();
   const params = useParams();
   const roomId = params.id as string;
@@ -96,7 +98,7 @@ export default function CreateNewSchedulePage() {
 
       await api.post(`/schedules/${week_id}/needed/`, { slots: cellsToSubmit });
 
-      alert("새 스케줄이 생성되었습니다.");
+      showAlert("새 스케줄이 생성되었습니다.");
       router.push(`/room/${roomId}/schedule`);
     } catch (err: any) {
       //에러 핸들링
@@ -106,7 +108,6 @@ export default function CreateNewSchedulePage() {
   return (
     <div className="flex flex-col flex-1">
       <div className="flex-1 overflow-auto pb-40">
-        {" "}
         <div className="p-4 flex-shrink-0">
           <p className="text-center text-gray-700 mb-2">
             <span className="font-bold">간병 필요 시간대</span>를 등록해주세요
@@ -115,7 +116,6 @@ export default function CreateNewSchedulePage() {
             이번주 ({weekData.displayRange})
           </p>
         </div>
-        {/* 2. "추가된 목록" */}
         <div className="p-4 space-y-2">
           {timeRanges.length === 0 ? (
             <p className="text-gray-400 text-center mt-10">
@@ -125,7 +125,7 @@ export default function CreateNewSchedulePage() {
             timeRanges.map((range, index) => (
               <div
                 key={index}
-                className="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm"
+                className="flex justify-between items-center p-3 bg-white rounded-2xl shadow-sm"
               >
                 <span className="font-semibold text-gray-800">
                   {`${DAY_MAP[range.day]}요일 ${range.start}:00 - ${
@@ -135,6 +135,7 @@ export default function CreateNewSchedulePage() {
                 <Button
                   onClick={() => handleDeleteTimeRange(index)}
                   className="!px-2 !py-1"
+                  variant="secondary"
                 >
                   삭제
                 </Button>
@@ -144,9 +145,9 @@ export default function CreateNewSchedulePage() {
         </div>
       </div>
 
-      <div className="fixed bottom-16 w-full">
+      <div className="fixed bottom-20 w-full">
         <TimeRangeInput onAddTimeRange={handleAddTimeRange} />
-        <div className="p-4 bg-gray-100">
+        <div className="p-4">
           {error && <p className="text-sm text-red-500 mb-2">{error}</p>}
           <Button variant="primary" onClick={handleSubmit} className="w-full">
             저장

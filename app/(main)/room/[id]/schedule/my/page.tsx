@@ -27,11 +27,8 @@ function LoadingSpinner() {
 //메인 컴포넌트
 export default function MySchedulePage() {
   const params = useParams();
-
-  // 1. Context에서 '방 ID', '주간 ID', '확정 여부'를 가져옴
   const { roomId, scheduleStatus, isLoading: isContextLoading } = useRoom();
   const { week_id, is_finalized } = scheduleStatus;
-
   const [myScheduleGrid, setMyScheduleGrid] = useState<FullGrid | null>(null);
   const [myUserId, setMyUserId] = useState<string | null>(null);
   const [myColor, setMyColor] = useState<string>("#FFFFFF");
@@ -85,7 +82,7 @@ export default function MySchedulePage() {
         이번주 나의 시간표
       </h2>
 
-      <div className="grid grid-cols-8 gap-1 p-4 bg-white rounded-lg shadow-md">
+      <div className="grid grid-cols-8 gap-1 p-4 rounded-lg shadow-md">
         <div />
         {DAYS.map((day) => (
           <div key={day} className="text-center font-semibold text-xs py-2">

@@ -5,12 +5,14 @@ import Button from "@/components/Button";
 import Input from "@/components/Input";
 import Modal from "@/components/Modal";
 import api from "@/lib/api";
+import { useAlert } from "@/lib/AlertContext";
 
 // 비밀번호 - 8~20자, 문자, 숫자, 특수문자(@$!%*#?&) 각각 1개 이상 포함
 const PASSWORD_REGEX =
   /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,20}$/;
 
 export default function SignupPage() {
+  const { showAlert } = useAlert();
   const router = useRouter();
 
   const [name, setName] = useState("");
@@ -101,7 +103,7 @@ export default function SignupPage() {
     setServerError("");
 
     if (!isPasswordValid || password !== checkPassword) {
-      alert("비밀번호를 올바르게 입력해주세요.");
+      showAlert("비밀번호를 올바르게 입력해주세요.");
       return;
     }
     setIsModalOpen(true);
@@ -109,19 +111,47 @@ export default function SignupPage() {
 
   return (
     <>
-      <div>
-        <h2>일반 회원가입</h2>
+      <h1 className="text-[22px] text-ex-purple font-medium text-center mt-7">
+        돌봄온
+      </h1>
+      <div className="mx-5 my-9">
+        <h2 className="text-xl">회원가입</h2>
+        <hr className="border-t border-bg-purple w-[350px]" />
       </div>
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form onSubmit={handleSubmit} className="mx-5 flex flex-col gap-7">
+        <div className="flex flex-col gap-1">
           <label>이름</label>
           <Input
             type="text"
-            placeholder="이름을 입력해주세요"
+            placeholder="이름 입력"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
+            className="bg-white border border-bd-purple shadow-lg rounded-4xl w-40 text-gray-400"
           />
+        </div>
+
+        <div>
+          <label>이메일</label>
+          <div className="flex gap-4 items-center">
+            <Input
+              type="text"
+              placeholder="이메일 입력"
+              value={emailId}
+              onChange={(e) => setEmailId(e.target.value)}
+              required
+              className="bg-white border border-bd-purple shadow-lg rounded-4xl w-40 text-gray-400"
+            />
+            <p>@</p>
+            <Input
+              type="text"
+              placeholder="gmail.com"
+              value={emailDomain}
+              onChange={(e) => setEmailDomain(e.target.value)}
+              required
+              className="bg-white border border-bd-purple shadow-lg rounded-4xl w-36 text-gray-400"
+            />
+          </div>
         </div>
 
         <div>
@@ -137,8 +167,9 @@ export default function SignupPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            className="bg-white border border-bd-purple shadow-lg rounded-4xl w-90 text-gray-400"
           />
-          <div className="flex items-center">
+          <div className="flex items-center pt-3">
             <input
               id="show-password-toggle"
               type="checkbox"
@@ -169,30 +200,13 @@ export default function SignupPage() {
             required
             //입력 비활성화
             disabled={!isPasswordValid}
-            className={`mt-1 ${!isPasswordValid ? "cursor-not-allowed" : ""}`}
+            className={`mt-1 bg-white border border-bd-purple shadow-lg rounded-4xl w-90 text-gray-400 ${
+              !isPasswordValid ? "cursor-not-allowed" : ""
+            }`}
           />
         </div>
-        <div>
-          <label>이메일</label>
-          <div className="flex gap-5 items-center">
-            <Input
-              type="text"
-              placeholder="이메일 주소"
-              value={emailId}
-              onChange={(e) => setEmailId(e.target.value)}
-              required
-            />
-            <p>@</p>
-            <Input
-              type="text"
-              placeholder="gmail.com"
-              value={emailDomain}
-              onChange={(e) => setEmailDomain(e.target.value)}
-              required
-            />
-          </div>
-        </div>
-        <div>
+
+        <div className="flex flex-col gap-3 mt-[115px]">
           {serverError && <p className="text-red-500">{serverError}</p>}
           <Button type="submit">가입하기</Button>
           <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
@@ -206,7 +220,7 @@ export default function SignupPage() {
               </Button>
             </div>
           </Modal>
-          <Button type="button" onClick={handleReset}>
+          <Button type="button" onClick={handleReset} variant="secondary">
             입력 초기화
           </Button>
         </div>

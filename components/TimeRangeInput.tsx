@@ -17,10 +17,7 @@ const HOURS_OF_DAY = Array.from({ length: 24 }, (_, i) => ({
 }));
 
 type Props = {
-  // "추가" 버튼 클릭 시 호출될 함수
   onAddTimeRange: (day: number, start: number, end: number) => boolean;
-  // (나중에 ParticipatePage에서 사용할 '필터링' prop - 지금은 비워둠)
-  // availableHours?: Record<number, number[]>; // { 0: [9, 10], 1: [11, 12] }
 };
 
 export default function TimeRangeInput({ onAddTimeRange }: Props) {
@@ -44,7 +41,7 @@ export default function TimeRangeInput({ onAddTimeRange }: Props) {
   };
 
   return (
-    <div className="w-full p-4 bg-gray-100 border-t shadow-md">
+    <div className="w-full p-4 border-t border-b border-bg-purple">
       <div className="flex items-center gap-2">
         {/* 요일 선택 */}
         <select
@@ -90,7 +87,7 @@ export default function TimeRangeInput({ onAddTimeRange }: Props) {
         </select>
 
         {/* 추가 버튼 */}
-        <Button variant="primary" onClick={handleAddClick} className="!p-3">
+        <Button onClick={handleAddClick} className="!p-3 w-12 ml-8 text-xl">
           +
         </Button>
       </div>

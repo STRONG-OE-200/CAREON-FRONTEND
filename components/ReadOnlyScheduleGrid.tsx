@@ -3,8 +3,7 @@ import React from "react";
 
 type GridProps = {
   gridData: number[][];
-  // (필요시 mySchedule, myColor 등도 받을 수 있도록 확장 가능)
-  highlightColor?: string; // (e.g., "#F5F5F5" 또는 핑크색)
+  highlightColor?: string;
 };
 
 const DAYS = ["일", "월", "화", "수", "목", "금", "토"];
@@ -18,7 +17,7 @@ export default function ReadOnlyScheduleGrid({
     <div className="overflow-x-auto">
       {" "}
       {/* 폰에서 가로 스크롤 */}
-      <div className="grid grid-cols-8 gap-1 p-4 bg-white rounded-lg shadow-md min-w-[424px]">
+      <div className="grid grid-cols-8 gap-1 p-4 rounded-lg shadow-md min-w-[424px]">
         {/* 요일 헤더 */}
         <div className="w-8" />
         {DAYS.map((day) => (

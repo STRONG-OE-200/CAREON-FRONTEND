@@ -11,6 +11,8 @@ import LogDetailModal from "@/components/LogDetailModal";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale/ko";
 import { twMerge } from "tailwind-merge";
+import Image from "next/image";
+import { useAlert } from "@/lib/AlertContext";
 
 type Metric = {
   id: number;
@@ -51,6 +53,7 @@ const formatCurrentDate = (date: Date) => {
 
 //메인 컴포넌트
 export default function LogPage() {
+  const { showAlert } = useAlert();
   const router = useRouter();
   const { roomId } = useRoom();
   const [isLoading, setIsLoading] = useState(true);
@@ -128,7 +131,9 @@ export default function LogPage() {
         handleOpenLogModal(metric);
       }
     } else {
-      alert("상단에서 로그를 등록할 항목(예: 체온, 혈압)을 먼저 선택해주세요.");
+      showAlert(
+        "상단에서 로그를 등록할 항목(예: 체온, 혈압)을 먼저 선택해주세요."
+      );
     }
   };
 
@@ -153,22 +158,21 @@ export default function LogPage() {
 
   return (
     <>
+      <h1 className="text-center text-ex-purple text-[22px] font-semibold mt-4 mb-2">
+        돌봄온
+      </h1>
       <div className="p-4">
-        <div className="flex justify-between items-center mb-4">
-          <button
-            onClick={() => handleDateChange(-1)} //
-            className="text-2xl font-bold text-gray-400 hover:text-gray-700 p-2"
-          >
-            ◀
+        <div className="flex justify-between items-baseline mb-4">
+          <button onClick={() => handleDateChange(-1)}>
+            <Image src="/log-left.svg" width={12} height={12} alt="yesterday" />
           </button>
-          <h1 className="text-2xl font-semibold mb-4 text-gray-800">
+          <h1 className="text-xl font-medium mb-4 text-main-purple">
             {formatCurrentDate(currentDate)}
           </h1>
           <button
             onClick={() => handleDateChange(1)} //
-            className="text-2xl font-bold text-gray-400 hover:text-gray-700 p-2"
           >
-            ▶
+            <Image src="/log-right.svg" width={12} height={12} alt="tomorrow" />
           </button>
         </div>
 
@@ -176,7 +180,11 @@ export default function LogPage() {
           <Button
             variant={filterMetricId === null ? "primary" : "secondary"}
             onClick={() => setFilterMetricId(null)}
-            className="rounded-full"
+            className={
+              filterMetricId === null
+                ? "text-main-purple rounded-full font-medium"
+                : "text-gray rounded-full font-medium"
+            }
           >
             전체
           </Button>
@@ -187,7 +195,11 @@ export default function LogPage() {
               key={metric.id}
               variant={filterMetricId === metric.id ? "primary" : "secondary"}
               onClick={() => setFilterMetricId(metric.id)}
-              className="rounded-full"
+              className={
+                filterMetricId === metric.id
+                  ? "text-main-purple rounded-full font-medium"
+                  : "text-gray rounded-full font-medium"
+              }
             >
               {metric.label}
             </Button>
@@ -198,7 +210,7 @@ export default function LogPage() {
             <Button
               variant="secondary"
               onClick={handleOpenAddMetricModal}
-              className="rounded-full w-12 h-12 flex-shrink-0"
+              className="rounded-full w-12 h-12 flex-shrink-0 text-gray font-medium"
             >
               +
             </Button>
@@ -214,30 +226,27 @@ export default function LogPage() {
             filteredLogs.map((log) => (
               <div
                 key={log.id}
-                className="flex items-center border-b pb-3 cursor-pointer hover:bg-gray-50"
+                className="flex items-center border-b border-bg-purple pt-2 cursor-pointer hover:bg-gray-50"
                 onClick={() => setSelectedLogId(log.id)}
               >
-                <div className="flex flex-col items-center w-20">
-                  <span className="text-sm text-gray-700">
+                <div className="border-l-2 border-main-purple h-7 mr-4"></div>
+
+                <div className="flex gap-2 items-center w-20">
+                  <span className="font-medium text-gray">
                     {formatLogTime(log.time_only).split(" ")[0]}
                   </span>
-                  <span className="text-lg font-semibold text-gray-900">
+                  <span className="font-medium text-gray">
                     {formatLogTime(log.time_only).split(" ")[1]}
                   </span>
                 </div>
-                <div className="border-l-2 border-blue-500 h-10 ml-2 mr-4"></div>
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-600">
-                    {log.metric_label || "알 수 없음"}
-                  </p>
-                  {log.memo && (
+                <div className="flex-1 pl-16">
+                  <p>{log.metric_label || "알 수 없음"}</p>
+                  {/* {log.memo && (
                     <p className="text-sm text-gray-500">{log.memo}</p>
-                  )}
+                  )} */}
                 </div>
-                <div>
-                  <p className="text-lg font-medium text-gray-800">
-                    {log.content}
-                  </p>
+                <div className="flex pr-5">
+                  <p>{log.content}</p>
                 </div>
               </div>
             ))
@@ -248,13 +257,17 @@ export default function LogPage() {
         <div className="flex justify-center my-6">
           <button
             onClick={handlePlusClick}
-            className="w-12 h-12 flex items-center justify-center rounded-full bg-purple-600 text-white text-3xl shadow-lg hover:bg-purple-700"
+            className="w-12 h-12 flex items-center justify-center rounded-full text-3xl"
           >
-            +
+            <Image src="/log-plus.svg" width={24} height={24} alt="add" />
           </button>
         </div>
 
-        <Button onClick={() => setIsChartModalOpen(true)}>
+        <Button
+          variant="secondary"
+          onClick={() => setIsChartModalOpen(true)}
+          className="fixed bottom-28 w-88"
+        >
           체온, 혈압 기록 차트로 보기
         </Button>
       </div>
@@ -284,7 +297,7 @@ export default function LogPage() {
           setIsChartModalOpen(false);
         }}
       >
-        <div>
+        <div className="flex justify-between px-5">
           <Button
             onClick={() => {
               router.push(`/room/${roomId}/log/chart/temperature`);

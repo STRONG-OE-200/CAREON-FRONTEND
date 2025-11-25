@@ -39,17 +39,17 @@ export default function Sidebar({
     <>
       <div className="fixed inset-0 top-16 z-20" onClick={onClose}>
         <div
-          className="fixed top-16 left-0 w-full h-full bg-white z-30 p-4"
+          className="fixed top-16 left-0 w-full h-full bg-[linear-gradient(180deg,#E8E9FB_0%,#FFF_100%)] z-30 p-4"
           onClick={(e) => e.stopPropagation()}
         >
-          <nav className="flex flex-col">
+          <nav className="flex flex-col text-lg font-light">
             <>
               <button
                 onClick={() => {
                   onClose();
                   router.push(`/room/${roomId}/schedule/my`);
                 }}
-                className="py-3 border-b text-left"
+                className="py-3 border-b border-main-purple text-left"
                 disabled={!roomId}
               >
                 내 스케줄만 보기
@@ -59,7 +59,7 @@ export default function Sidebar({
                   onClose();
                   router.push(`/room/${roomId}/schedule/participate/${weekId}`);
                 }}
-                className="py-3 border-b text-left"
+                className="py-3 border-b border-main-purple text-left"
                 disabled={!roomId}
               >
                 시간표 생성 참여하기
@@ -67,7 +67,7 @@ export default function Sidebar({
             </>
             <button
               onClick={handleCreateClick}
-              className="py-3 border-b text-left"
+              className="py-3 border-b border-main-purple text-left"
               disabled={!roomId}
             >
               스케줄 생성하기
@@ -76,8 +76,10 @@ export default function Sidebar({
         </div>
       </div>
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <p>앗, 방장만 사용할 수 있는 기능이에요.</p>
-        <Button onClick={() => setIsModalOpen(false)} className="mt-4">
+        <p className="text-center mt-4">
+          앗, 방장만 사용할 수 있는 기능이에요.
+        </p>
+        <Button onClick={() => setIsModalOpen(false)} className="mt-4 ml-48">
           확인
         </Button>
       </Modal>
