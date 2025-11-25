@@ -4,7 +4,7 @@ import Modal from "@/components/Modal";
 import api from "@/lib/api";
 import { format } from "date-fns";
 import Image from "next/image";
-import ko from "date-fns/locale/ko";
+import { ko } from "date-fns/locale/ko";
 import { useAlert } from "@/lib/AlertContext";
 
 type Props = {
