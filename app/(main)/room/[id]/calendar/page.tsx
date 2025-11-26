@@ -20,6 +20,7 @@ type CalendarEvent = {
   start_at: string; // ISO String
   end_at: string;
   assignee: { id: number; name: string } | null;
+  is_all_day: boolean;
 };
 
 export default function CalendarPage() {
