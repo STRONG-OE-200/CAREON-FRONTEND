@@ -48,8 +48,10 @@ export default function CalendarDetailModal({
       const fetchData = async () => {
         try {
           // 1) 상세 정보
-          const res = await api.get(`/calendar/events/${eventId}`);
+          const res = await api.get(`/calendar/events/${eventId}/`);
           const data = res.data;
+          console.log("상세 조회 데이터:", data);
+          console.log("첨부파일 목록:", data.attachments);
           setEvent(data);
 
           // State 초기화
@@ -182,9 +184,20 @@ export default function CalendarDetailModal({
                 )}
               </div>
             ) : (
-              <p className="text-gray mt-1">
-                {format(new Date(event.start_at), "M월 d일 HH:mm")} ~{" "}
-                {format(new Date(event.end_at), "HH:mm")}
+              <p className="text-sm text-gray mt-1">
+                {event.is_all_day ? (
+                  // 1. 종일일 때: "11월 5일 (종일)"
+                  <span>
+                    {format(new Date(event.start_at), "M월 d일")}
+                    <span className="font-medium">(종일)</span>
+                  </span>
+                ) : (
+                  // 2. 시간 지정일 때: "11월 5일 09:00 ~ 10:00"
+                  <span>
+                    {format(new Date(event.start_at), "M월 d일 HH:mm")}~
+                    {format(new Date(event.end_at), "HH:mm")}
+                  </span>
+                )}
               </p>
             )}
           </div>

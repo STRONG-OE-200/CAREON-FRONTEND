@@ -89,7 +89,11 @@ export default function CalendarCreateModal({
         // 파일 타입 판별 (MIME type 기반)
         if (selectedFile.type.startsWith("audio")) {
           fileType = "AUDIO";
+        } else {
+          fileType = "IMAGE"; // (기본값)
         }
+
+        formData.append("type", fileType);
 
         // [확인사항 3] URL: "/files/upload/"
         const uploadRes = await api.post("/files/upload/", formData, {
@@ -101,16 +105,25 @@ export default function CalendarCreateModal({
       }
 
       //일정생성
-      const startAt = new Date(`${date}T${startTime}:00`).toISOString();
-      const endAt = new Date(`${date}T${endTime}:00`).toISOString();
+
+      let startAtIso = "";
+      let endAtIso = "";
+
+      if (isAllDay) {
+        startAtIso = new Date(`${date}T00:00:00`).toISOString();
+        endAtIso = new Date(`${date}T23:59:59`).toISOString();
+      } else {
+        startAtIso = new Date(`${date}T${startTime}:00`).toISOString();
+        endAtIso = new Date(`${date}T${endTime}:00`).toISOString();
+      }
 
       const payload = {
         date,
         title,
         description,
         is_all_day: isAllDay,
-        start_at: startAt,
-        end_at: endAt,
+        start_at: startAtIso,
+        end_at: endAtIso,
         repeat_rule: repeatRule,
         repeat_until: repeatRule !== "NONE" ? repeatUntil : null,
         assignee_id: assigneeId,
