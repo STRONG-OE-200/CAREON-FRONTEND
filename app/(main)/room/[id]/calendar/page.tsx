@@ -72,7 +72,7 @@ export default function CalendarPage() {
       const endDate = format(endOfMonth(activeMonth), "yyyy-MM-dd");
 
       const response = await api.get(
-        `/rooms/${roomId}/calendar/events?start_date=${startDate}&end_date=${endDate}`
+        `/rooms/${roomId}/calendar/events/?start_date=${startDate}&end_date=${endDate}`
       );
 
       const events: CalendarEvent[] = response.data.events;
@@ -90,7 +90,7 @@ export default function CalendarPage() {
     try {
       const dateStr = format(selectedDate, "yyyy-MM-dd");
       const response = await api.get(
-        `/rooms/${roomId}/calendar/events?date=${dateStr}&include_time=true`
+        `/rooms/${roomId}/calendar/events/?date=${dateStr}&include_time=true`
       );
       setDailyEvents(response.data.events);
     } catch (err) {

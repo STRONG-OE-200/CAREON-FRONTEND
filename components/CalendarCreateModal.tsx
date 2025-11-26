@@ -120,7 +120,7 @@ export default function CalendarCreateModal({
         room_id: roomId,
       };
 
-      await api.post(`/rooms/${roomId}/calendar/events`, payload);
+      await api.post(`/rooms/${roomId}/calendar/events/`, payload);
       showAlert("일정이 등록되었습니다.");
       onClose(true);
     } catch (err: any) {
