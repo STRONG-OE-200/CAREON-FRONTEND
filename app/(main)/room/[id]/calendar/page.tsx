@@ -20,6 +20,7 @@ type CalendarEvent = {
   start_at: string; // ISO String
   end_at: string;
   assignee: { id: number; name: string } | null;
+  is_all_day: boolean;
 };
 
 export default function CalendarPage() {
@@ -186,12 +187,20 @@ export default function CalendarPage() {
               >
                 {/* 시간 표시 */}
                 <div className="flex flex-col items-center justify-center min-w-[60px] border-r border-gray-100 pr-4">
-                  <span className="font-bold text-gray-800">
-                    {format(new Date(event.start_at), "HH:mm")}
-                  </span>
-                  <span className="text-gray-400 mt-1">
-                    {format(new Date(event.end_at), "HH:mm")}
-                  </span>
+                  {event.is_all_day ? (
+                    // 1. 종일일 때
+                    <span className="text-sm font-medium">종일</span>
+                  ) : (
+                    // 2. 시간 지정일 때
+                    <>
+                      <span className="text-sm font-bold text-gray-800">
+                        {format(new Date(event.start_at), "HH:mm")}
+                      </span>
+                      <span className="text-xs text-gray-400 mt-1">
+                        {format(new Date(event.end_at), "HH:mm")}
+                      </span>
+                    </>
+                  )}
                 </div>
 
                 {/* 내용 */}
