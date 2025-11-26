@@ -262,14 +262,13 @@ export default function CalendarDetailModal({
                   return (
                     <div
                       key={file.id}
-                      className="relative w-full h-48 border rounded-lg overflow-hidden"
+                      className="relative w-full h-48 overflow-hidden"
                     >
                       <a href={file.url} target="_blank" rel="noreferrer">
-                        <Image
+                        <img
                           src={file.url}
                           alt="첨부 이미지"
-                          fill
-                          className="object-cover"
+                          className="w-full h-auto object-contain max-h-[300px]"
                         />
                       </a>
                     </div>
