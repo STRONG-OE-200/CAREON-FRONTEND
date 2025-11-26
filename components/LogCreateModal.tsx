@@ -46,7 +46,7 @@ export default function LogCreateModal({
 
           // 2. 멤버 목록 API 호출
           const res = await api.get(`/rooms/${roomId}/members/`);
-          const members: Member[] = res.data;
+          const members: Any[] = res.data;
 
           // 3. 내 ID와 일치하는 멤버 찾기
           const me = members.find((m) => m.user_id.toString() === myUserId);
