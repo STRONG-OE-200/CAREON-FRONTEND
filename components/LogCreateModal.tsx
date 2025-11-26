@@ -39,8 +39,31 @@ export default function LogCreateModal({
       setLogMemo("");
       setError("");
 
-      const name = localStorage.getItem("name"); // 로그인 시 저장한 'name'
-      setLoggerName(name || "사용자");
+      const fetchMyName = async () => {
+        try {
+          // 1. localStorage에서 내 ID 가져오기
+          const myUserId = localStorage.getItem("myUserId");
+
+          // 2. 멤버 목록 API 호출
+          const res = await api.get(`/rooms/${roomId}/members/`);
+          const members: any[] = res.data;
+
+          // 3. 내 ID와 일치하는 멤버 찾기
+          const me = members.find((m) => m.user_id.toString() === myUserId);
+
+          if (me) {
+            setLoggerName(me.user_name);
+          } else {
+            // 멤버 목록에 없으면 localStorage의 'name' 백업 사용
+            setLoggerName(localStorage.getItem("name") || "알 수 없음");
+          }
+        } catch (err) {
+          console.error("작성자 정보 로드 실패:", err);
+          setLoggerName(localStorage.getItem("name") || "사용자");
+        }
+      };
+      fetchMyName();
+      // --- ⬆️ 여기까지 수정 ⬆️ ---
     }
   }, [isOpen]);
 

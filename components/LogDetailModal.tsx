@@ -7,6 +7,9 @@ import api from "@/lib/api";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale/ko";
 import Image from "next/image";
+import { MEMBER_COLORS } from "@/lib/colors";
+
+const MEMBER_COLOR_ARRAY = Object.values(MEMBER_COLORS);
 
 // "08:30:00" -> "오전 8:30"
 const formatLogTime = (timeOnly: string | null | undefined) => {
@@ -29,11 +32,18 @@ type LogDetail = {
   metric: number;
   metric_label: string;
   author_id: number;
+  author?: number;
   content: string;
   memo: string | null;
   time_only: string;
   date_only: string;
   created_at: string;
+};
+
+type Member = {
+  user_id: number;
+  user_name: string;
+  membership_index?: number; // (API에 있으면 사용)
 };
 
 type ModalProps = {
@@ -50,7 +60,8 @@ export default function LogDetailModal({
   roomId,
 }: ModalProps) {
   const [logData, setLogData] = useState<LogDetail | null>(null);
-  const [loggerName, setLoggerName] = useState("로딩 중..."); //
+  const [loggerName, setLoggerName] = useState("로딩 중...");
+  const [loggerColor, setLoggerColor] = useState("#E0E0E0");
   const [isEditMode, setIsEditMode] = useState(false);
   const [logTime, setLogTime] = useState("");
   const [logDate, setLogDate] = useState("");
@@ -62,23 +73,45 @@ export default function LogDetailModal({
 
   // 1. logId가 바뀌면 상세 데이터 + 로그 기록자 이름(Assumption) 가져오기
   useEffect(() => {
-    const name = localStorage.getItem("name");
-    setLoggerName(name || "사용자");
-
     if (logId) {
       const fetchLogDetail = async () => {
         setIsSubmitting(true);
         setError("");
-        setIsEditMode(false); //
+        setIsEditMode(false);
         try {
+          // 1) 로그 상세 정보 가져오기
           const response = await api.get<LogDetail>(`/logs/${logId}/`);
           const data = response.data;
           setLogData(data);
+
+          // 폼 state 초기화
           setLogDate(data.date_only);
-          setLogTime(data.time_only.substring(0, 5)); // "08:30:00" -> "08:30"
+          setLogTime(data.time_only.substring(0, 5));
           setLogContent(data.content);
           setLogMemo(data.memo || "");
+
+          // 2) [수정] 작성자 이름 찾기
+          // 방 멤버 목록을 가져와서 author_id와 일치하는 사람을 찾습니다.
+          const membersRes = await api.get(`/rooms/${roomId}/members/`);
+          const members: Member[] = membersRes.data;
+
+          const authorId = data.author_id || data.author;
+          const authorIndex = members.findIndex((m) => m.user_id === authorId);
+          const authorMember = members.find((m) => m.user_id === authorId);
+
+          if (authorMember) {
+            setLoggerName(authorMember.user_name); // 작성자 이름 설정
+            const colorIndex = authorMember.membership_index ?? authorIndex;
+            const color = `#${
+              MEMBER_COLOR_ARRAY[colorIndex % MEMBER_COLOR_ARRAY.length]
+            }`;
+            setLoggerColor(color);
+          } else {
+            setLoggerName("알 수 없음"); // (탈퇴했거나 찾을 수 없는 경우)
+            setLoggerColor("#E0E0E0");
+          }
         } catch (err) {
+          console.error(err);
           setError("로그 상세 정보를 불러오는 데 실패했습니다.");
         } finally {
           setIsSubmitting(false);
@@ -86,14 +119,13 @@ export default function LogDetailModal({
       };
       fetchLogDetail();
     }
-  }, [logId]);
+  }, [logId, roomId]);
 
   // 2. "저장" (수정) 버튼 클릭
   const handleUpdate = async () => {
     if (!logId) return;
 
     const payload = {
-      // [API 가정] 'PATCH /logs/{id}/'
       content: logContent,
       memo: logMemo || null,
       time_only: `${logTime}:00`,
@@ -122,7 +154,6 @@ export default function LogDetailModal({
     setIsSubmitting(true);
     setError("");
     try {
-      // [API 가정] 'DELETE /logs/{id}/'
       await api.delete(`/logs/${logId}/`);
       onClose(true); // 성공 (새로고침)
     } catch (err: any) {
@@ -219,7 +250,10 @@ export default function LogDetailModal({
           <Image src="/log-person.svg" height={16} width={16} alt="user" />
           <div className="flex justify-between items-center w-full">
             <p className="font-semibold">로그기록자</p>
-            <span className="px-4 py-1 bg-gray-200 rounded-full text-sm font-medium">
+            <span
+              className="px-4 py-1 rounded-full text-sm font-medium text-gray-900"
+              style={{ backgroundColor: loggerColor }}
+            >
               {loggerName}
             </span>
           </div>
