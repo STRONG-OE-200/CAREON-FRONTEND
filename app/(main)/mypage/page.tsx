@@ -12,16 +12,16 @@ export default function Mypage() {
           <hr className="border-t border-bg-purple w-[350px]" />
         </div>
         <div className="flex flex-col space-y-6 pt-10">
-          <Link
-            href="/mypage/room-info"
-            className="text-lg text-gray-800 hover:text-blue-600"
-          >
+          <Link href="/mypage/room-info" className="text-lg text-gray-800">
             우리 방 정보
           </Link>
           <Link
-            href="/mypage/logout"
-            className="text-lg text-gray-800 hover:text-blue-600"
+            href="https://www.youtube.com/channel/UCXCdHtjMyfVa67njWIhA_DQ"
+            className="text-lg text-gray-800"
           >
+            돌봄온 이용 가이드
+          </Link>
+          <Link href="/mypage/logout" className="text-lg text-gray-800">
             로그아웃
           </Link>
         </div>

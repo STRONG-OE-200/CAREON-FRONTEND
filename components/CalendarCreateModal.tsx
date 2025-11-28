@@ -224,26 +224,43 @@ export default function CalendarCreateModal({
         </div>
 
         {/* 3. 반복 설정 */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Image
-              src="/cal-repeat.svg"
-              alt="반복"
-              width={20}
-              height={20}
-              className="opacity-50"
-            />
-            <span className="text-gray-600 font-medium">반복하기</span>
+        <div className="flex flex-col items-center justify-between">
+          <div className="flex justify-start w-full">
+            <div className="flex items-center gap-2">
+              <Image
+                src="/cal-repeat.svg"
+                alt="반복"
+                width={20}
+                height={20}
+                className="opacity-50"
+              />
+              <span className="text-gray-600 font-medium">반복하기</span>
+            </div>
+            <select
+              value={repeatRule}
+              onChange={(e) => setRepeatRule(e.target.value)}
+              className="text-gray-500 bg-transparent focus:outline-none text-right cursor-pointer"
+            >
+              <option value="NONE">반복 안 함</option>
+              <option value="DAILY">매일</option>
+              <option value="WEEKLY">매주</option>
+              <option value="MONTHLY">매월</option>
+            </select>
           </div>
-          <select
-            value={repeatRule}
-            onChange={(e) => setRepeatRule(e.target.value)}
-            className="text-gray-500 bg-transparent focus:outline-none text-right cursor-pointer"
-          >
-            <option value="NONE">반복 안 함</option>
-            <option value="WEEKLY">매주</option>
-            <option value="MONTHLY">매월</option>
-          </select>
+
+          {repeatRule !== "NONE" && (
+            <div className="flex pt-2 gap-5 items-center">
+              <p className="text-gray-600">반복 종료일</p>
+              <input
+                type="date"
+                value={repeatUntil}
+                onChange={(e) => setRepeatUntil(e.target.value)}
+                className="text-sm border p-1 rounded text-gray-600 w-[130px]"
+                required // 반복 시 필수
+                min={date} // 시작일 이후여야 함
+              />
+            </div>
+          )}
         </div>
 
         <hr className="border-gray-100" />
