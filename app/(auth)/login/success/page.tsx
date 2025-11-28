@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
+import Link from "next/link";
 
 export default function LoginSuccess() {
   const router = useRouter();
@@ -33,6 +34,12 @@ export default function LoginSuccess() {
         >
           방 생성하기
         </Button>
+        <Link
+          href="https://youtu.be/qNl_GKSqA28?si=jvFDCIPzJBUZCo7e"
+          className="hover:text-main-purple cursor-pointer pt-7"
+        >
+          방 생성 및 방 입장 안내 영상 보러가기
+        </Link>
       </main>
     </>
   );
