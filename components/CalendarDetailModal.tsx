@@ -50,8 +50,6 @@ export default function CalendarDetailModal({
           // 1) 상세 정보
           const res = await api.get(`/calendar/events/${eventId}/`);
           const data = res.data;
-          console.log("상세 조회 데이터:", data);
-          console.log("첨부파일 목록:", data.attachments);
           setEvent(data);
 
           // State 초기화
